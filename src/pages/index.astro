@@ -1,6 +1,12 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import BottomNav from '../components/BottomNav.astro';
 ---
-<html lang="es">
-  <head><meta charset="UTF-8" /><title>SCDV</title></head>
-  <body><h1>SCDV Verificador</h1></body>
-</html>
+<BaseLayout title="SCDV Verificador">
+  <Header />
+  <main class="flex-1 px-4 pt-6 pb-28">
+    <p class="text-muted text-sm">Cargando verificador…</p>
+  </main>
+  <BottomNav />
+</BaseLayout>
