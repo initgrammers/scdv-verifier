@@ -20,6 +20,13 @@ export default {
         '2xl': '1.5rem',
         '3xl': '1.75rem',
       },
+      boxShadow: {
+        'glow-accent': '0 0 8px #C8F135',
+        'glow-success': '0 0 20px rgba(34, 216, 122, 0.3)',
+        'glow-success-lg': '0 0 40px rgba(34, 216, 122, 0.6)',
+        'glow-danger': '0 0 20px rgba(255, 77, 106, 0.3)',
+        'glow-danger-lg': '0 0 40px rgba(255, 77, 106, 0.6)',
+      },
       animation: {
         'scan-line': 'scan 2s linear infinite',
         'scale-in': 'scaleIn 0.3s ease-out',
