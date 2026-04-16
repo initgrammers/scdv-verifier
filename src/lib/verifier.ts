@@ -71,8 +71,16 @@ export function decodeQRPayload(raw: string): QRPayload {
   try {
     const padded = raw.replace(/-/g, '+').replace(/_/g, '/') +
       '='.repeat((4 - (raw.length % 4)) % 4);
-    const json = atob(padded);
-    return JSON.parse(json) as QRPayload;
+    const parsed = JSON.parse(atob(padded));
+    if (
+      typeof parsed?.d !== 'object' ||
+      typeof parsed?.k?.pub !== 'string' ||
+      typeof parsed?.k?.sig_root !== 'string' ||
+      typeof parsed?.s !== 'string'
+    ) {
+      throw new Error('Estructura de QR inválida.');
+    }
+    return parsed as QRPayload;
   } catch {
     throw new Error('QR malformado o no es un certificado SCDV.');
   }
