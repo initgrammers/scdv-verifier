@@ -1,0 +1,13 @@
+# IA Agents & Assistants (Proprietary files)
+CLAUDE.md
+.gemini/
+.geminirules
+.cursor/
+.cursorrules
+.cursorignore
+.windsurfrules
+.aider*
+.cline*
+.roo/
+.roocode
+cline_docs/

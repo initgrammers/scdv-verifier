@@ -1,0 +1,9 @@
+{
+  "name": "scdv-verificador",
+  "version": "1.0.0",
+  "description": "Sistema de Certificados Digitales Verificables - Frontend Verificador",
+  "scripts": {
+    "sync:agents": "cat AGENTS.md skills/*.md > .cursorrules && cp .cursorrules CLAUDE.md && cp .cursorrules .windsurfrules && cp .cursorrules .geminirules",
+    "setup:agents": "bun run sync:agents"
+  }
+}
