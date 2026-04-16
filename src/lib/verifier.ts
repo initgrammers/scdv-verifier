@@ -2,11 +2,9 @@ import * as ed from '@noble/ed25519';
 import { sha512 } from '@noble/hashes/sha2.js';
 import type { QRPayload, VerifyResult } from './types';
 
-// Required for @noble/ed25519 v3 in browser/PWA environment
 ed.hashes.sha512 = sha512;
 
-// Placeholder — replace with real root public key (Base64url of 32 raw bytes) before production deploy
-export const ROOT_PUBLIC_KEY = 'PLACEHOLDER_REPLACE_WITH_REAL_ROOT_PUBLIC_KEY';
+export const ROOT_PUBLIC_KEY = import.meta.env.PUBLIC_ROOT_KEY || 'PLACEHOLDER';
 
 function fromBase64Url(b64: string): Uint8Array {
   const padded = b64.replace(/-/g, '+').replace(/_/g, '/') +
@@ -26,8 +24,6 @@ export async function verifyChain(
     const sigDataBytes = fromBase64Url(payload.s);
     const dataBytes = new TextEncoder().encode(JSON.stringify(payload.d));
 
-    // PASO 1: Is the course key authorized by root?
-    // @noble/ed25519 v3: verify is synchronous
     const step1Passed = ed.verify(sigRootBytes, coursePubBytes, rootPubBytes);
     if (!step1Passed) {
       return {
@@ -39,7 +35,6 @@ export async function verifyChain(
       };
     }
 
-    // PASO 2: Were the certificate data unaltered?
     const step2Passed = ed.verify(sigDataBytes, dataBytes, coursePubBytes);
     if (!step2Passed) {
       return {
@@ -71,7 +66,9 @@ export function decodeQRPayload(raw: string): QRPayload {
   try {
     const padded = raw.replace(/-/g, '+').replace(/_/g, '/') +
       '='.repeat((4 - (raw.length % 4)) % 4);
-    const parsed = JSON.parse(atob(padded));
+    const binaryStr = atob(padded);
+    const bytes = Uint8Array.from(binaryStr, (c) => c.charCodeAt(0));
+    const parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
     if (
       typeof parsed?.d !== 'object' ||
       typeof parsed?.k?.pub !== 'string' ||

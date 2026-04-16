@@ -2,11 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import BottomNav from '../components/BottomNav.astro';
+import { Verifier } from '../components/Verifier';
 ---
 <BaseLayout title="SCDV Verificador">
   <Header />
-  <main class="flex-1 px-4 pt-6 pb-28">
-    <p class="text-muted text-sm">Cargando verificador…</p>
+  <main class="flex-1">
+    <Verifier client:load />
   </main>
   <BottomNav />
 </BaseLayout>
