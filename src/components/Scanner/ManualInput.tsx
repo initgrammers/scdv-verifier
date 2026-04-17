@@ -21,6 +21,7 @@ export function ManualInput({ value, onChange, onSubmit }: ManualInputProps) {
       <Keyboard size={18} style={{ color: 'rgba(255,255,255,0.3)', flexShrink: 0 }} />
       <input
         type="text"
+        autoFocus
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && onSubmit()}
@@ -31,7 +32,7 @@ export function ManualInput({ value, onChange, onSubmit }: ManualInputProps) {
           border: 'none',
           outline: 'none',
           color: '#fff',
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: 500,
           fontFamily: 'inherit',
         }}

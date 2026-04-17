@@ -17,7 +17,17 @@ const base = import.meta.env.BASE_URL;
 <html lang="es" class="bg-bg">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style is:global>
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        overscroll-behavior-y: none;
+        touch-action: pan-x pan-y;
+      }
+    </style>
     <meta name="theme-color" content="#C8F135" />
     <meta name="description" content={description} />
     <meta name="mobile-web-app-capable" content="yes" />

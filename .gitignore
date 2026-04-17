@@ -13,3 +13,8 @@ CLAUDE.md
 cline_docs/
 
 node_modules/
+
+dist/
+.env
+
+output.txt
