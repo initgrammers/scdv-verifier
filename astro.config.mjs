@@ -59,8 +59,14 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff,woff2}'],
-        navigateFallback: '/scdv-verifier/',
-        navigateFallbackAllowlist: [/^\/scdv-verifier/],
+        globDirectory: 'dist',
+        navigateFallback: null,
+        additionalManifestEntries: [
+          { url: '/scdv-verifier/', revision: null },
+          { url: '/scdv-verifier/historial/', revision: null },
+          { url: '/scdv-verifier/como-verificar/', revision: null },
+          { url: '/scdv-verifier/404.html', revision: null },
+        ],
         runtimeCaching: [
           {
             urlPattern: /\/scdv-verifier\/.*\.(js|css|png|svg|ico|woff2?)$/,

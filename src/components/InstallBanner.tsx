@@ -19,6 +19,18 @@ function detectInstallMode(): InstallMode {
   return null;
 }
 
+declare global {
+  interface Window { __pwaPrompt?: BeforeInstallPromptEvent; }
+}
+
+// Capture the event as early as possible — before React mounts
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    window.__pwaPrompt = e as BeforeInstallPromptEvent;
+  }, { once: true });
+}
+
 export function InstallBanner({ base = '/' }: { base?: string }) {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [mode, setMode] = useState<InstallMode>(null);
@@ -31,6 +43,13 @@ export function InstallBanner({ base = '/' }: { base?: string }) {
 
     if (detectedMode === 'ios') {
       setTimeout(() => setMode('ios'), 1800);
+      return;
+    }
+
+    // Pick up event captured before mount, or wait for it
+    if (window.__pwaPrompt) {
+      setDeferredPrompt(window.__pwaPrompt);
+      setTimeout(() => setMode('android'), 1800);
       return;
     }
 
