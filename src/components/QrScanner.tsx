@@ -44,19 +44,23 @@ export function QrScanner({ onScan, isScanning }: QrScannerProps) {
   }, []);
 
   return (
-    <div style={{ margin: '24px 20px 0' }}>
+    <div style={{ margin: '12px 20px 0' }}>
       {/* View Switcher: Camera or Manual */}
       {mode === 'camera' ? (
         <div style={{
-          borderRadius: 28,
+          borderRadius: 32,
           overflow: 'hidden',
-          background: '#000',
-          aspectRatio: '1',
+          background: '#0a0a0a',
+          width: '100%',
+          minHeight: 300,
+          maxHeight: 'min(500px, 60vh)',
+          aspectRatio: 'unset', // Allow flexible content
           position: 'relative',
           border: '1px solid rgba(255,255,255,0.07)',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
         }}>
           {/* Main scanner container for html5-qrcode */}
-          <div id={QR_CONTAINER_ID} style={{ width: '100%', height: '100%' }} />
+          <div id={QR_CONTAINER_ID} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           
           <ScannerOverlay />
           

@@ -56,28 +56,27 @@ export function Verifier() {
   const showResults = state === 'success' || state === 'error';
 
   return (
-    <div className="flex flex-col min-h-screen pb-20">
-      {state === 'idle' && <HeroSection />}
-      {showResults ? (
-        <ResultsView
-          result={result}
-          certData={certData}
-          isVerifying={isVerifying}
-          onReset={handleReset}
-        />
-      ) : (
-        <QrScanner onScan={handleScan} isScanning={state !== 'idle'} />
-      )}
-    </div>
-  );
-}
-
-function VerifierHeader() {
-  return (
-    <div className="px-6 pt-6 pb-2">
-      <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-white/[0.07] w-fit">
-        <span className="w-2 h-2 rounded-full bg-accent shadow-glow-accent" />
-        <span className="text-sm font-extrabold tracking-tight text-white">SCDV Verificador</span>
+    <div className="flex flex-col min-h-[calc(100vh-80px)] relative overflow-hidden">
+      {/* Ante-background glow */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/10 blur-[120px] rounded-full pointer-events-none" />
+      
+      <div className="relative z-10 flex flex-col flex-1 pb-20">
+        {state === 'idle' && <HeroSection />}
+        
+        <div className="flex-1 flex flex-col justify-center">
+          {showResults ? (
+            <ResultsView
+              result={result}
+              certData={certData}
+              isVerifying={isVerifying}
+              onReset={handleReset}
+            />
+          ) : (
+            <div className="animate-in fade-in zoom-in duration-500">
+              <QrScanner onScan={handleScan} isScanning={state !== 'idle'} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -85,11 +84,21 @@ function VerifierHeader() {
 
 function HeroSection() {
   return (
-    <div className="px-6 pt-2">
-      <h1 className="text-[28px] font-extrabold leading-tight tracking-tight text-white mb-1.5">
-        Verificar<br />Certificado
+    <div className="px-7 pt-8 pb-4 animate-in slide-in-from-top duration-700">
+      <div className="flex items-center gap-2.5 mb-5">
+        <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/20 backdrop-blur-md">
+          <span className="w-2 h-2 rounded-full bg-accent shadow-glow-accent animate-pulse" />
+          <span className="text-[10px] font-black uppercase tracking-[0.1em] text-accent">Sistema Activo</span>
+        </div>
+      </div>
+      
+      <h1 className="text-[34px] font-black leading-[1.1] tracking-tight text-white mb-3">
+        Validación <br />
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/40 italic">Instantánea</span>
       </h1>
-      <p className="text-sm text-muted font-medium">Escanea el QR o ingresa el código</p>
+      <p className="text-sm text-muted font-medium leading-relaxed max-w-[260px]">
+        Escanea el código QR del certificado para verificar su autenticidad criptográfica.
+      </p>
     </div>
   );
 }
@@ -103,23 +112,31 @@ interface ResultsViewProps {
 
 function ResultsView({ result, certData, isVerifying, onReset }: ResultsViewProps) {
   return (
-    <>
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <ResultCard result={result} isVerifying={isVerifying} />
-      {certData && <CertDataCard data={certData} />}
+      {certData && (
+        <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 delay-150">
+          <CertDataCard data={certData} />
+        </div>
+      )}
       <StepChips result={result} isVerifying={isVerifying} />
       <ResetButton onReset={onReset} />
-    </>
+    </div>
   );
 }
 
 function ResetButton({ onReset }: { onReset: () => void }) {
   return (
-    <div className="mx-6 mt-4">
+    <div className="mx-6 mt-8">
       <button
         onClick={onReset}
-        className="w-full py-4 rounded-[18px] font-bold text-base bg-card text-white border border-white/[0.07]"
+        className="group relative w-full py-4 rounded-[22px] font-bold text-base transition-all active:scale-[0.98]"
       >
-        Verificar otro certificado
+        <div className="absolute inset-0 bg-gradient-to-b from-white/[0.08] to-transparent border border-white/[0.1] rounded-[22px] shadow-lg group-hover:from-white/[0.12]" />
+        <span className="relative z-10 text-white tracking-tight flex items-center justify-center gap-2">
+          Nueva Verificación
+          <span className="opacity-40 group-hover:translate-x-0.5 transition-transform">→</span>
+        </span>
       </button>
     </div>
   );
