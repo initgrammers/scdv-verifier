@@ -1,8 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Camera, Keyboard } from 'lucide-react';
-import { useCameraScanner } from '../hooks/useCameraScanner';
+import { Scanner } from '@yudiel/react-qr-scanner';
 import { ScannerOverlay } from './Scanner/ScannerOverlay';
-import { CameraOverlay } from './Scanner/CameraOverlay';
 import { ManualInput } from './Scanner/ManualInput';
 
 type InputMode = 'camera' | 'manual';
@@ -12,25 +11,13 @@ interface QrScannerProps {
   isScanning: boolean;
 }
 
-const QR_CONTAINER_ID = 'qr-reader-container';
-
 /**
  * QrScanner Component
- * Handles the UI for both camera-based and manual code input.
- * Delegates low-level camera logic to useCameraScanner hook.
+ * Uses high-performance ZXing WebAssembly via @yudiel/react-qr-scanner.
  */
 export function QrScanner({ onScan, isScanning }: QrScannerProps) {
   const [mode, setMode] = useState<InputMode>('camera');
   const [inputValue, setInputValue] = useState('');
-  const [retryKey, setRetryKey] = useState(0);
-
-  // The hook handles the heavy lifting of permissions and html5-qrcode lifecycle
-  const { status } = useCameraScanner({ 
-    onScan, 
-    isActive: mode === 'camera' && !isScanning, 
-    retryKey,
-    containerId: QR_CONTAINER_ID 
-  });
 
   const handleManualSubmit = useCallback(() => {
     if (inputValue.trim()) {
@@ -39,9 +26,11 @@ export function QrScanner({ onScan, isScanning }: QrScannerProps) {
     }
   }, [inputValue, onScan]);
 
-  const handleRetry = useCallback(() => {
-    setRetryKey(k => k + 1);
-  }, []);
+  const handleQRScan = useCallback((result: any) => {
+    if (result && result.length > 0 && result[0].rawValue) {
+      onScan(result[0].rawValue);
+    }
+  }, [onScan]);
 
   return (
     <div style={{ margin: '12px 20px 0' }}>
@@ -60,21 +49,30 @@ export function QrScanner({ onScan, isScanning }: QrScannerProps) {
           border: '1px solid rgba(255,255,255,0.07)',
           boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
         }}>
-          {/* Main scanner container for html5-qrcode */}
-          <div id={QR_CONTAINER_ID} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          
+          {(!isScanning) && (
+            <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
+              <Scanner
+                onScan={handleQRScan}
+                formats={['qr_code']}
+                components={{
+                  audio: false,
+                  finder: false // We use our custom ScannerOverlay
+                }}
+                styles={{
+                  container: { width: '100%', height: '100%', paddingTop: 0 },
+                  video: { objectFit: 'cover' }
+                }}
+              />
+            </div>
+          )}
+
           <ScannerOverlay />
-          
-          <CameraOverlay 
-            status={status} 
-            onRetry={handleRetry} 
-          />
         </div>
       ) : (
-        <ManualInput 
-          value={inputValue} 
-          onChange={setInputValue} 
-          onSubmit={handleManualSubmit} 
+        <ManualInput
+          value={inputValue}
+          onChange={setInputValue}
+          onSubmit={handleManualSubmit}
         />
       )}
 
@@ -82,11 +80,10 @@ export function QrScanner({ onScan, isScanning }: QrScannerProps) {
       <div className="mt-5 px-5 md:px-0">
         <button
           onClick={() => setMode(mode === 'camera' ? 'manual' : 'camera')}
-          className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] border ${
-            mode === 'camera' 
-              ? 'bg-white/5 border-white/10 text-white hover:bg-white/10' 
-              : 'bg-accent border-accent text-bg shadow-glow-accent'
-          }`}
+          className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] border ${mode === 'camera'
+            ? 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+            : 'bg-accent border-accent text-bg shadow-glow-accent'
+            }`}
         >
           {mode === 'camera' ? (
             <>

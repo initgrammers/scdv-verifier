@@ -49,12 +49,11 @@ export function HistorialList() {
       {/* Toolbar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold text-white tracking-tight">Historial</h1>
           <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.15em]">
             {filteredEntries.length} de {entries.length} verificación{entries.length !== 1 ? 'es' : ''}
           </span>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <div className="relative flex-1 md:w-80">
             <Search
@@ -69,7 +68,7 @@ export function HistorialList() {
               className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-white/20 outline-none focus:border-accent/40 focus:bg-white/[0.08] transition-all"
             />
           </div>
-          
+
           <button
             onClick={handleClear}
             className="flex items-center gap-2 text-xs font-bold text-red-500/80 hover:text-red-500 transition-colors px-2 py-1"
@@ -85,7 +84,7 @@ export function HistorialList() {
         {filteredEntries.map((entry) => (
           <HistoryCard key={entry.id} entry={entry} />
         ))}
-        
+
         {filteredEntries.length === 0 && search && (
           <div className="col-span-full flex flex-col items-center py-20 gap-4 text-white/20">
             <Search size={32} />
@@ -108,8 +107,8 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
   });
 
   const isValid = result.valid;
-  const statusClasses = isValid 
-    ? "text-accent bg-accent/10 border-accent/20" 
+  const statusClasses = isValid
+    ? "text-accent bg-accent/10 border-accent/20"
     : "text-red-400 bg-red-400/10 border-red-400/20";
 
   return (
@@ -123,7 +122,7 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
           {isValid ? <CheckCircle size={14} /> : <XCircle size={14} />}
           {isValid ? 'Válido' : 'Inválido'}
         </div>
-        
+
         <div className="flex items-center gap-1.5 text-white/30">
           <Calendar size={12} />
           <span className="text-[10px] font-bold uppercase tracking-tight">{formattedDate}</span>
