@@ -61,12 +61,26 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff,woff2}'],
         globDirectory: 'dist',
         navigateFallback: null,
-        additionalManifestEntries: [
-          { url: '/scdv-verifier/', revision: null },
-          { url: '/scdv-verifier/historial/', revision: null },
-          { url: '/scdv-verifier/como-verificar/', revision: null },
-          { url: '/scdv-verifier/404.html', revision: null },
+        manifestTransforms: [
+          (entries) => {
+            const seen = new Set();
+            const manifest = entries
+              .map((entry) => {
+                const url = entry.url.startsWith('/scdv-verifier/')
+                  ? entry.url
+                  : `/scdv-verifier/${entry.url}`;
+                return { ...entry, url };
+              })
+              .filter((entry) => {
+                if (seen.has(entry.url)) return false;
+                seen.add(entry.url);
+                return true;
+              });
+            return { manifest };
+          },
         ],
+        navigateFallback: '/scdv-verifier/index.html',
+        navigateFallbackAllowlist: [/^\/scdv-verifier\//],
         runtimeCaching: [
           {
             urlPattern: /\/scdv-verifier\/.*\.(js|css|png|svg|ico|woff2?)$/,
