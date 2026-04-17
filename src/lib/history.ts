@@ -6,13 +6,18 @@ const MAX_ENTRIES = 50;
 export function addToHistory(result: VerifyResult, rawPayload: string): void {
   try {
     const entries = getHistory();
+    
+    // Deduplicate: remove existing entry with same payload
+    const otherEntries = entries.filter(e => e.rawPayload !== rawPayload);
+    
     const newEntry: HistoryEntry = {
       id: crypto.randomUUID(),
       timestamp: Date.now(),
       result,
       rawPayload,
     };
-    const updated = [newEntry, ...entries].slice(0, MAX_ENTRIES);
+
+    const updated = [newEntry, ...otherEntries].slice(0, MAX_ENTRIES);
     localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
   } catch {
     // Swallow storage errors (e.g. QuotaExceededError on iOS Safari).
