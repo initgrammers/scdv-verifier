@@ -8,21 +8,21 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 export default defineConfig({
   output: 'static',
-  base: '/scdv-verificador/',
+  base: '/scdv-verifier/',
   integrations: [
     react(),
     tailwind(),
     AstroPWA({
       registerType: 'autoUpdate',
-      base: '/scdv-verificador/',
-      scope: '/scdv-verificador/',
+      base: '/scdv-verifier/',
+      scope: '/scdv-verifier/',
       includeAssets: ['favicon.svg', 'icon-192.png', 'icon-512.png'],
       manifest: {
         name: 'SCDV Verificador',
         short_name: 'Verificador',
         description: 'Verificador de certificados digitales auténticos',
-        start_url: '/scdv-verificador/',
-        id: '/scdv-verificador/',
+        start_url: '/scdv-verifier/',
+        id: '/scdv-verifier/',
         display: 'standalone',
         background_color: '#0A0A0F',
         theme_color: '#C8F135',
@@ -32,25 +32,25 @@ export default defineConfig({
         categories: ['utilities', 'productivity'],
         icons: [
           {
-            src: '/scdv-verificador/icon-192.png',
+            src: '/scdv-verifier/icon-192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any',
           },
           {
-            src: '/scdv-verificador/icon-192.png',
+            src: '/scdv-verifier/icon-192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'maskable',
           },
           {
-            src: '/scdv-verificador/icon-512.png',
+            src: '/scdv-verifier/icon-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any',
           },
           {
-            src: '/scdv-verificador/icon-512.png',
+            src: '/scdv-verifier/icon-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',
@@ -59,11 +59,11 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,woff,woff2}'],
-        navigateFallback: '/scdv-verificador/',
-        navigateFallbackAllowlist: [/^\/scdv-verificador/],
+        navigateFallback: '/scdv-verifier/',
+        navigateFallbackAllowlist: [/^\/scdv-verifier/],
         runtimeCaching: [
           {
-            urlPattern: /\/scdv-verificador\/.*\.(js|css|png|svg|ico|woff2?)$/,
+            urlPattern: /\/scdv-verifier\/.*\.(js|css|png|svg|ico|woff2?)$/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'scdv-static-assets',
