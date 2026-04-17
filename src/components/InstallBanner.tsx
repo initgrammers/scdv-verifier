@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 const DISMISSED_KEY = 'scdv-install-dismissed';
+const SNOOZE_DAYS = 3;
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -37,7 +38,12 @@ export function InstallBanner({ base = '/' }: { base?: string }) {
   const [animateOut, setAnimateOut] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem(DISMISSED_KEY)) return;
+    const raw = localStorage.getItem(DISMISSED_KEY);
+    if (raw) {
+      const { permanent, until } = JSON.parse(raw);
+      if (permanent || Date.now() < until) return;
+      localStorage.removeItem(DISMISSED_KEY);
+    }
 
     const detectedMode = detectInstallMode();
 
@@ -65,7 +71,8 @@ export function InstallBanner({ base = '/' }: { base?: string }) {
 
   const dismiss = (permanent = false) => {
     setAnimateOut(true);
-    if (permanent) localStorage.setItem(DISMISSED_KEY, '1');
+    const until = Date.now() + SNOOZE_DAYS * 24 * 60 * 60 * 1000;
+    localStorage.setItem(DISMISSED_KEY, JSON.stringify({ permanent, until }));
     setTimeout(() => setMode(null), 350);
   };
 
@@ -73,7 +80,9 @@ export function InstallBanner({ base = '/' }: { base?: string }) {
     if (!deferredPrompt) return;
     await deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') localStorage.setItem(DISMISSED_KEY, '1');
+    if (outcome === 'accepted') {
+      localStorage.setItem(DISMISSED_KEY, JSON.stringify({ permanent: true, until: 0 }));
+    }
     dismiss(false);
   };
 
