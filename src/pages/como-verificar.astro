@@ -2,9 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import BottomNav from '../components/BottomNav.astro';
+import { APP_NAME } from '../config/constants';
 ---
 
-<BaseLayout title="Cómo verificar - SCDV Verificador">
+<BaseLayout title={`Cómo verificar - ${APP_NAME}`}>
   <Header />
   <main class="flex-1 pb-28">
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { APP_NAME } from '../config/constants';
 
 const DISMISSED_KEY = 'scdv-install-dismissed';
 
@@ -114,7 +115,7 @@ export function InstallBanner({ base = '/' }: { base?: string }) {
             }}>
               <img
                 src={`${base}icon-192.png`}
-                alt="SCDV Verificador"
+                alt={APP_NAME}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
@@ -128,7 +129,7 @@ export function InstallBanner({ base = '/' }: { base?: string }) {
                 margin: '0 0 3px',
                 letterSpacing: '-0.2px',
               }}>
-                SCDV Verificador
+                {APP_NAME}
               </p>
               <p style={{
                 fontSize: '12px',

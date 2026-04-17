@@ -3,8 +3,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import BottomNav from '../components/BottomNav.astro';
 import { Verifier } from '../components/Verifier';
+import { APP_NAME } from '../config/constants';
 ---
-<BaseLayout title="SCDV Verificador">
+<BaseLayout title={APP_NAME}>
   <Header />
   <main class="flex-1">
     <Verifier client:load />

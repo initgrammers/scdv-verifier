@@ -1,12 +1,13 @@
 ---
 import { InstallBanner } from '../components/InstallBanner';
+import { APP_NAME } from '../config/constants';
 
 interface Props {
   title?: string;
   description?: string;
 }
 const {
-  title = 'SCDV Verificador',
+  title = APP_NAME,
   description = 'Verificador de certificados digitales auténticos',
 } = Astro.props;
 

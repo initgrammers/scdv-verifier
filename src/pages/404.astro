@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import BottomNav from '../components/BottomNav.astro';
+import { APP_NAME } from '../config/constants';
 
 const base = import.meta.env.BASE_URL || '';
 ---
@@ -125,7 +126,7 @@ const base = import.meta.env.BASE_URL || '';
       color: rgba(255,255,255,0.15);
       letter-spacing: 0.04em;
     ">
-      SCDV Verificador &nbsp;•&nbsp; v1.0
+      {APP_NAME} &nbsp;•&nbsp; v1.0
     </p>
 
   </main>

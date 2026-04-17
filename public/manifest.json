@@ -1,5 +1,5 @@
 {
-  "name": "SCDV Verificador",
+  "name": "Verificador",
   "short_name": "Verificador",
   "description": "Verificador de certificados digitales auténticos",
   "start_url": "/scdv-verificador/",

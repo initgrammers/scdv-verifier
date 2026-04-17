@@ -3,9 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import BottomNav from '../components/BottomNav.astro';
 import { HistorialList } from '../components/HistorialList';
+import { APP_NAME } from '../config/constants';
 ---
 
-<BaseLayout title="Historial - SCDV Verificador">
+<BaseLayout title={`Historial - ${APP_NAME}`}>
   <Header />
   <main class="flex-1 py-6 pb-28">
     <div class="px-6 mb-4">
