@@ -24,29 +24,172 @@ const tabs = [
 ];
 ---
 
-<nav class="fixed bottom-0 left-0 right-0 z-50 flex justify-center pb-safe-or-6 pt-2"
-  style="background: linear-gradient(to top, rgb(10 10 15 / 0.98) 70%, transparent);">
+<nav class="fixed bottom-8 left-0 right-0 z-50 flex justify-center px-10 pointer-events-none">
+  <div 
+    id="bottom-nav-container"
+    class="liquid-glass relative flex gap-1 p-1 rounded-[32px] overflow-hidden pointer-events-auto transition-transform active:scale-[0.98]"
+  >
+    {/* Glass Layers */}
+    <div class="lg-overlay-bg absolute inset-0 z-0 bg-white/[0.03] backdrop-blur-[24px]" />
+    <div class="lg-filter-layer absolute inset-0 z-1 pointer-events-none">
+      <div id="liquid-glass-refractor" class="w-full h-full" />
+    </div>
 
-  <div class="flex gap-1 px-2 py-2 rounded-full bg-card border border-white/[0.07] shadow-2xl">
-    {tabs.map(tab => {
-      const isActive = path === tab.match || path === tab.href;
-      return (
-        <a
-          href={tab.href}
-          class:list={[
-            'flex flex-col items-center justify-center w-16 h-12 rounded-full transition-all duration-200 gap-0.5 no-underline',
-            isActive ? 'bg-accent text-bg' : 'text-muted hover:text-white',
-          ]}
-        >
-          <svg
-            width="18" height="18" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round"
-            set:html={tab.svg}
+    {/* SVG Filter Definition (Hidden) */}
+    <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="liquid-glass-filter-id" color-interpolation-filters="sRGB">
+          <feImage id="lg-displacement-map" x="0" y="0" result="displacementMap" />
+          
+          {/* Main Displacement for Red channel */}
+          <feDisplacementMap
+            id="lg-displace-r"
+            in="SourceGraphic"
+            in2="displacementMap"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="displacedR"
           />
-          <span class="text-[10px] font-bold leading-none">{tab.label}</span>
-        </a>
-      );
-    })}
+          <feColorMatrix in="displacedR" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="rOnly" />
+
+          {/* Main Displacement for Green channel */}
+          <feDisplacementMap
+            id="lg-displace-g"
+            in="SourceGraphic"
+            in2="displacementMap"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="displacedG"
+          />
+          <feColorMatrix in="displacedG" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="gOnly" />
+
+          {/* Main Displacement for Blue channel */}
+          <feDisplacementMap
+            id="lg-displace-b"
+            in="SourceGraphic"
+            in2="displacementMap"
+            xChannelSelector="R"
+            yChannelSelector="G"
+            result="displacedB"
+          />
+          <feColorMatrix in="displacedB" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="bOnly" />
+
+          <feBlend in="rOnly" in2="gOnly" mode="screen" result="rg" />
+          <feBlend in="rg" in2="bOnly" mode="screen" />
+        </filter>
+      </defs>
+    </svg>
+
+    {/* Content */}
+    <div class="relative z-10 flex gap-1">
+      {tabs.map(tab => {
+        const isActive = path === tab.match || path === tab.href;
+        return (
+          <a
+            href={tab.href}
+            class:list={[
+              'relative flex flex-col items-center justify-center w-[68px] h-[50px] rounded-[24px] transition-all duration-300 gap-1 no-underline group outline-none',
+              isActive ? 'text-accent' : 'text-white/30 hover:text-white/60',
+            ]}
+          >
+            {isActive && (
+              <div 
+                transition:name="nav-indicator"
+                class="absolute inset-0 bg-white/[0.05] rounded-[24px] border border-white/[0.1] shadow-inner" 
+              />
+            )}
+            
+            <div class={`transition-all duration-300 ${isActive ? 'scale-110 -translate-y-0.5' : 'group-hover:scale-105'}`}>
+              <svg
+                width="19" height="19" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width={isActive ? "2.2" : "1.8"}
+                stroke-linecap="round" stroke-linejoin="round"
+                set:html={tab.svg}
+              />
+            </div>
+            
+            <span class:list={[
+              'text-[7.5px] font-bold uppercase tracking-[0.12em] transition-all duration-300',
+              isActive ? 'opacity-100' : 'opacity-60'
+            ]}>
+              {tab.label}
+            </span>
+            
+            {isActive && (
+              <div class="absolute -bottom-0.5 w-1 h-1 rounded-full bg-accent shadow-[0_0_8px_#C8F135]" />
+            )}
+          </a>
+        );
+      })}
+    </div>
   </div>
 </nav>
+
+<style>
+  .liquid-glass {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.2),
+      0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  }
+
+  #liquid-glass-refractor {
+    /* Apply the filter by ID for better browser support */
+    backdrop-filter: url("#liquid-glass-filter-id") saturate(1.4) brightness(1.1);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4) brightness(1.1);
+    will-change: backdrop-filter;
+  }
+</style>
+
+<script>
+  import { getDisplacementMap } from '../lib/liquidGlass';
+
+  function initLiquidGlass() {
+    const container = document.getElementById('bottom-nav-container');
+    const refractor = document.getElementById('liquid-glass-refractor');
+    const feImage = document.getElementById('lg-displacement-map');
+    const feDisplaceR = document.getElementById('lg-displace-r');
+    const feDisplaceG = document.getElementById('lg-displace-g');
+    const feDisplaceB = document.getElementById('lg-displace-b');
+
+    if (!container || !refractor || !feImage) return;
+
+    // Configuration
+    const config = {
+      depth: 12,
+      strength: 85,
+      chromaticAberration: 4
+    };
+
+    function updateRefraction() {
+      const rect = container!.getBoundingClientRect();
+      const width = Math.round(rect.width);
+      const height = Math.round(rect.height);
+      const radius = 32;
+
+      // Update feImage dimensions and source
+      feImage?.setAttribute('width', width.toString());
+      feImage?.setAttribute('height', height.toString());
+      
+      const mapUrl = getDisplacementMap({
+        width,
+        height,
+        radius,
+        depth: config.depth
+      });
+      feImage?.setAttribute('href', mapUrl);
+
+      // Update scales for chromatic aberration
+      feDisplaceR?.setAttribute('scale', (config.strength + config.chromaticAberration * 2).toString());
+      feDisplaceG?.setAttribute('scale', (config.strength + config.chromaticAberration).toString());
+      feDisplaceB?.setAttribute('scale', config.strength.toString());
+    }
+
+    const ro = new ResizeObserver(updateRefraction);
+    ro.observe(container);
+    updateRefraction();
+  }
+
+  initLiquidGlass();
+  document.addEventListener('astro:after-swap', initLiquidGlass);
+</script>
