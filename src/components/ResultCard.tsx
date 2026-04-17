@@ -30,7 +30,7 @@ export function ResultCard({ result, isVerifying }: ResultCardProps) {
 
 function VerifyingState() {
   return (
-    <div className="mx-6 mt-6 bg-gradient-to-br from-surface to-card border border-white/[0.07] rounded-3xl p-8 flex flex-col items-center gap-3">
+    <div className="bg-gradient-to-br from-surface to-card border border-white/[0.07] rounded-3xl p-8 flex flex-col items-center gap-3">
       <PulsingIcon />
       <p className="text-base font-bold text-white">{MESSAGES.verifying.title}</p>
       <p className="text-xs text-muted text-center max-w-[220px]">{MESSAGES.verifying.subtitle}</p>
@@ -48,7 +48,7 @@ function PulsingIcon() {
 
 function ValidState() {
   return (
-    <div className="mx-6 mt-6 bg-gradient-to-br from-surface to-card border border-white/[0.07] rounded-3xl p-8 flex flex-col items-center gap-3">
+    <div className="bg-gradient-to-br from-surface to-card border border-white/[0.07] rounded-3xl p-8 flex flex-col items-center gap-3">
       <ResultIcon isValid />
       <Title isValid />
       <Subtitle isValid />
@@ -58,7 +58,7 @@ function ValidState() {
 
 function InvalidState({ error }: { error?: string }) {
   return (
-    <div className="mx-6 mt-6 bg-gradient-to-br from-surface to-card border border-white/[0.07] rounded-3xl p-8 flex flex-col items-center gap-3">
+    <div className="bg-gradient-to-br from-surface to-card border border-white/[0.07] rounded-3xl p-8 flex flex-col items-center gap-3">
       <ResultIcon isValid={false} />
       <Title isValid={false} />
       <ErrorMessage error={error} />

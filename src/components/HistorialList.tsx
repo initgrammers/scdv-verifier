@@ -32,36 +32,12 @@ export function HistorialList() {
 
   if (entries.length === 0) {
     return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '64px 32px',
-        gap: '16px',
-      }}>
-        <div style={{
-          width: '80px',
-          height: '80px',
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: '8px',
-        }}>
-          <Clock size={30} style={{ color: 'rgba(255,255,255,0.25)' }} />
+      <div className="flex flex-col items-center justify-center py-16 px-8 gap-4">
+        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-white/10 to-transparent border border-white/10 flex items-center justify-center mb-2">
+          <Clock size={30} className="text-white/20" />
         </div>
-        <p style={{ fontSize: '17px', fontWeight: 700, color: '#fff', margin: 0 }}>Sin verificaciones</p>
-        <p style={{
-          fontSize: '14px',
-          color: 'rgba(255,255,255,0.4)',
-          textAlign: 'center',
-          maxWidth: '220px',
-          lineHeight: 1.6,
-          margin: 0,
-        }}>
+        <p className="text-lg font-bold text-white lowercase first-letter:uppercase">Sin verificaciones</p>
+        <p className="text-sm text-white/40 text-center max-w-[220px] leading-relaxed">
           Las verificaciones que realices aparecerán aquí
         </p>
       </div>
@@ -69,104 +45,51 @@ export function HistorialList() {
   }
 
   return (
-    <div style={{ padding: '0 20px 32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div className="w-full max-w-6xl mx-auto px-6 md:px-10 pb-32 flex flex-col gap-6">
       {/* Toolbar */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '0 4px',
-      }}>
-        <span style={{
-          fontSize: '11px',
-          fontWeight: 700,
-          color: 'rgba(255,255,255,0.35)',
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-        }}>
-          {filteredEntries.length} de {entries.length} verificación{entries.length !== 1 ? 'es' : ''}
-        </span>
-        <button
-          onClick={handleClear}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            fontSize: '12px',
-            fontWeight: 700,
-            color: 'rgba(239,68,68,0.8)',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '4px 0',
-            transition: 'color 0.15s',
-          }}
-          onMouseEnter={e => (e.currentTarget.style.color = 'rgb(239,68,68)')}
-          onMouseLeave={e => (e.currentTarget.style.color = 'rgba(239,68,68,0.8)')}
-        >
-          <Trash2 size={13} />
-          Borrar todo
-        </button>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-1">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-bold text-white tracking-tight">Historial</h1>
+          <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.15em]">
+            {filteredEntries.length} de {entries.length} verificación{entries.length !== 1 ? 'es' : ''}
+          </span>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1 md:w-80">
+            <Search
+              size={16}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 pointer-events-none"
+            />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar certificados..."
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-11 pr-4 text-sm text-white placeholder:text-white/20 outline-none focus:border-accent/40 focus:bg-white/[0.08] transition-all"
+            />
+          </div>
+          
+          <button
+            onClick={handleClear}
+            className="flex items-center gap-2 text-xs font-bold text-red-500/80 hover:text-red-500 transition-colors px-2 py-1"
+          >
+            <Trash2 size={14} />
+            <span className="hidden sm:inline">Borrar todo</span>
+          </button>
+        </div>
       </div>
 
-      {/* Search */}
-      <div style={{ position: 'relative' }}>
-        <Search
-          size={16}
-          style={{
-            position: 'absolute',
-            left: '14px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            color: 'rgba(255,255,255,0.3)',
-            pointerEvents: 'none',
-          }}
-        />
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por nombre, curso o emisor…"
-          style={{
-            width: '100%',
-            boxSizing: 'border-box',
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.09)',
-            borderRadius: '14px',
-            padding: '12px 16px 12px 40px',
-            fontSize: '14px',
-            color: '#fff',
-            outline: 'none',
-            transition: 'border-color 0.2s, background 0.2s',
-            fontFamily: 'inherit',
-          }}
-          onFocus={e => {
-            e.currentTarget.style.borderColor = 'rgba(132,204,22,0.4)';
-            e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
-          }}
-          onBlur={e => {
-            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.09)';
-            e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-          }}
-        />
-      </div>
-
-      {/* Cards */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      {/* Grid de Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filteredEntries.map((entry) => (
           <HistoryCard key={entry.id} entry={entry} />
         ))}
+        
         {filteredEntries.length === 0 && search && (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            padding: '40px 0',
-            gap: '8px',
-            color: 'rgba(255,255,255,0.35)',
-          }}>
-            <Search size={24} />
-            <p style={{ margin: 0, fontSize: '14px' }}>Sin resultados para "{search}"</p>
+          <div className="col-span-full flex flex-col items-center py-20 gap-4 text-white/20">
+            <Search size={32} />
+            <p className="text-sm">Sin resultados para "{search}"</p>
           </div>
         )}
       </div>
@@ -185,100 +108,45 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
   });
 
   const isValid = result.valid;
-  const accentColor = isValid ? '#84cc16' : '#ef4444';
-  const accentBg = isValid ? 'rgba(132,204,22,0.12)' : 'rgba(239,68,68,0.12)';
-  const accentBorder = isValid ? 'rgba(132,204,22,0.25)' : 'rgba(239,68,68,0.25)';
+  const statusClasses = isValid 
+    ? "text-accent bg-accent/10 border-accent/20" 
+    : "text-red-400 bg-red-400/10 border-red-400/20";
 
   return (
-    <div style={{
-      background: 'linear-gradient(145deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.025) 100%)',
-      border: `1px solid rgba(255,255,255,0.09)`,
-      borderRadius: '20px',
-      overflow: 'hidden',
-      transition: 'transform 0.15s, box-shadow 0.15s',
-    }}
-      onMouseEnter={e => {
-        (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)';
-        (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 32px rgba(0,0,0,0.35)';
-      }}
-      onMouseLeave={e => {
-        (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
-        (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
-      }}
-    >
-      {/* Card header strip */}
-      <div style={{
-        padding: '14px 18px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-        background: accentBg,
-      }}>
-        {/* Status badge */}
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '7px',
-          background: accentBg,
-          border: `1px solid ${accentBorder}`,
-          borderRadius: '999px',
-          padding: '5px 12px 5px 8px',
-        }}>
-          {isValid ? (
-            <CheckCircle size={15} style={{ color: accentColor }} />
-          ) : (
-            <XCircle size={15} style={{ color: accentColor }} />
-          )}
-          <span style={{
-            fontSize: '12px',
-            fontWeight: 800,
-            color: accentColor,
-            letterSpacing: '0.02em',
-          }}>
-            {isValid ? 'Válido' : 'Inválido'}
-          </span>
-        </div>
+    <div className="group relative bg-gradient-to-br from-white/[0.07] to-white/[0.02] border border-white/10 rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 hover:border-white/20">
+      {/* Background Glow */}
+      <div className={`absolute top-0 right-0 w-32 h-32 blur-[64px] rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${isValid ? 'bg-accent' : 'bg-red-400'}`} />
 
-        {/* Date */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-          <Calendar size={11} style={{ color: 'rgba(255,255,255,0.25)' }} />
-          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>
-            {formattedDate}
-          </span>
+      {/* Card Header */}
+      <div className={`px-5 py-4 flex items-center justify-between border-b border-white/5 ${isValid ? 'bg-accent/[0.03]' : 'bg-red-400/[0.03]'}`}>
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-[11px] font-black uppercase tracking-wider ${statusClasses}`}>
+          {isValid ? <CheckCircle size={14} /> : <XCircle size={14} />}
+          {isValid ? 'Válido' : 'Inválido'}
+        </div>
+        
+        <div className="flex items-center gap-1.5 text-white/30">
+          <Calendar size={12} />
+          <span className="text-[10px] font-bold uppercase tracking-tight">{formattedDate}</span>
         </div>
       </div>
 
-      {/* Card body: certificate data */}
-      {result.data && (
-        <div style={{ padding: '4px 0' }}>
-          <FieldRow label="Participante" value={result.data.nombre} />
-          <FieldRow label="Curso" value={result.data.curso_nombre} />
-          {result.data.emisor && (
-            <FieldRow label="Emisor" value={result.data.emisor} isLast />
-          )}
-        </div>
-      )}
-
-      {/* Error state (invalid + no data) */}
-      {result.error && !result.data && (
-        <div style={{
-          padding: '14px 18px',
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '10px',
-        }}>
-          <AlertTriangle size={15} style={{ color: 'rgba(239,68,68,0.7)', marginTop: '1px', flexShrink: 0 }} />
-          <p style={{
-            margin: 0,
-            fontSize: '13px',
-            color: 'rgba(255,255,255,0.45)',
-            lineHeight: 1.5,
-          }}>
-            {result.error}
-          </p>
-        </div>
-      )}
+      {/* Card Content */}
+      <div className="p-2">
+        {result.data ? (
+          <div className="flex flex-col">
+            <FieldRow label="Participante" value={result.data.nombre} />
+            <FieldRow label="Curso" value={result.data.curso_nombre} />
+            {result.data.emisor && (
+              <FieldRow label="Emisor" value={result.data.emisor} isLast />
+            )}
+          </div>
+        ) : result.error && (
+          <div className="p-4 flex gap-3 items-start">
+            <AlertTriangle size={16} className="text-red-400/70 shrink-0 mt-0.5" />
+            <p className="text-sm text-white/40 leading-relaxed">{result.error}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -293,34 +161,11 @@ function FieldRow({
   isLast?: boolean;
 }) {
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'baseline',
-      padding: '11px 18px',
-      borderBottom: isLast ? 'none' : '1px solid rgba(255,255,255,0.05)',
-      gap: '12px',
-    }}>
-      <span style={{
-        fontSize: '11px',
-        fontWeight: 600,
-        color: 'rgba(255,255,255,0.35)',
-        textTransform: 'uppercase',
-        letterSpacing: '0.07em',
-        flexShrink: 0,
-      }}>
+    <div className={`flex items-baseline justify-between p-4 gap-4 ${!isLast ? 'border-b border-white/5' : ''}`}>
+      <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.12em] shrink-0">
         {label}
       </span>
-      <span style={{
-        fontSize: '13px',
-        fontWeight: 700,
-        color: 'rgba(255,255,255,0.9)',
-        textAlign: 'right',
-        maxWidth: '200px',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-      }}>
+      <span className="text-sm font-bold text-white/90 text-right truncate max-w-[180px]">
         {value}
       </span>
     </div>

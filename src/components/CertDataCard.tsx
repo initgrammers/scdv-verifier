@@ -42,7 +42,7 @@ export function CertDataCard({ data }: CertDataCardProps) {
   const fields = buildFields(data);
 
   return (
-    <div className="mx-6 mt-4 bg-card border border-white/[0.07] rounded-3xl overflow-hidden">
+    <div className="bg-card border border-white/[0.07] rounded-3xl overflow-hidden">
       <CardHeader />
       <CardBody fields={fields} />
     </div>

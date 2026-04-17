@@ -52,9 +52,10 @@ export function QrScanner({ onScan, isScanning }: QrScannerProps) {
           overflow: 'hidden',
           background: '#0a0a0a',
           width: '100%',
+          maxWidth: '600px',
+          margin: '0 auto',
           minHeight: 300,
-          maxHeight: 'min(500px, 60vh)',
-          aspectRatio: 'unset', // Allow flexible content
+          aspectRatio: '1/1', // Force square aspect ratio for consistent look
           position: 'relative',
           border: '1px solid rgba(255,255,255,0.07)',
           boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
@@ -77,52 +78,27 @@ export function QrScanner({ onScan, isScanning }: QrScannerProps) {
         />
       )}
 
-      {/* Mode Controls */}
-      <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+      {/* Mode Toggle Button */}
+      <div className="mt-5 px-5 md:px-0">
         <button
-          onClick={() => setMode('camera')}
-          style={{
-            flex: 1,
-            padding: '14px 0',
-            borderRadius: 18,
-            fontWeight: 800,
-            fontSize: 14,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 8,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-            border: 'none',
-            transition: 'all 0.15s',
-            background: mode === 'camera' ? '#84cc16' : 'rgba(255,255,255,0.06)',
-            color: mode === 'camera' ? '#0a0a0a' : 'rgba(255,255,255,0.7)',
-            boxShadow: mode === 'camera' ? '0 4px 20px rgba(132,204,22,0.3)' : 'none',
-          }}
+          onClick={() => setMode(mode === 'camera' ? 'manual' : 'camera')}
+          className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] border ${
+            mode === 'camera' 
+              ? 'bg-white/5 border-white/10 text-white hover:bg-white/10' 
+              : 'bg-accent border-accent text-bg shadow-glow-accent'
+          }`}
         >
-          <Camera size={17} />
-          Activar Cámara
-        </button>
-        
-        <button
-          onClick={() => setMode('manual')}
-          style={{
-            padding: '14px 18px',
-            borderRadius: 18,
-            fontWeight: 800,
-            fontSize: 14,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-            transition: 'all 0.15s',
-            background: mode === 'manual' ? 'rgba(132,204,22,0.15)' : 'rgba(255,255,255,0.06)',
-            color: mode === 'manual' ? '#84cc16' : 'rgba(255,255,255,0.7)',
-            border: mode === 'manual' ? '1px solid rgba(132,204,22,0.3)' : '1px solid rgba(255,255,255,0.08)',
-          }}
-        >
-          <Keyboard size={17} />
+          {mode === 'camera' ? (
+            <>
+              <Keyboard size={18} className="opacity-60" />
+              Ingresar código por texto
+            </>
+          ) : (
+            <>
+              <Camera size={18} />
+              Activar Escáner de Cámara
+            </>
+          )}
         </button>
       </div>
     </div>
