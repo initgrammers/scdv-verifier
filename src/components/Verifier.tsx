@@ -60,9 +60,9 @@ export function Verifier() {
     <div className="flex flex-col min-h-[calc(100vh-80px)] w-full relative overflow-hidden">
       {/* Ante-background glow */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/10 blur-[120px] rounded-full pointer-events-none" />
-      
+
       <div className="relative z-10 flex flex-col lg:flex-row flex-1 w-full max-w-7xl mx-auto px-4 lg:px-8 pb-24 lg:pb-0 lg:items-center lg:gap-12 xl:gap-20">
-        
+
         {/* Left Column: Hero (Always visible on Desktop, context on mobile) */}
         <div className={`w-full lg:w-[45%] transition-all duration-700 ${!isIdle && 'hidden lg:block'}`}>
           <HeroSection smallOnDesktop={!isIdle} />
@@ -98,7 +98,7 @@ function HeroSection({ smallOnDesktop = false }: { smallOnDesktop?: boolean }) {
             <span className="text-[10px] font-black uppercase tracking-[0.1em] text-accent">Sistema Activo</span>
           </div>
         </div>
-        
+
         <h1 className={`${smallOnDesktop ? 'text-[32px] lg:text-[44px]' : 'text-[42px] lg:text-[72px]'} font-black leading-[0.9] tracking-tight text-white mb-6 text-center md:text-left transition-all duration-500`}>
           Validación <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/40 italic">Instantánea</span>
@@ -136,7 +136,7 @@ function ResultsView({ result, certData, isVerifying, onReset }: ResultsViewProp
           </div>
         )}
       </div>
-      
+
       <div className="lg:hidden mt-4">
         <StepChips result={result} isVerifying={isVerifying} />
         <ResetButton onReset={onReset} />
@@ -153,7 +153,7 @@ function ResetButton({ onReset }: { onReset: () => void }) {
         className="group relative w-full py-4.5 rounded-[22px] font-bold text-base transition-all active:scale-[0.98]"
       >
         <div className="absolute inset-0 bg-accent rounded-[22px] shadow-glow-accent opacity-90 group-hover:opacity-100 transition-opacity" />
-        <span className="relative z-10 text-bg tracking-tight flex items-center justify-center gap-2">
+        <span className="relative z-10 text-bg tracking-tight flex items-center justify-center gap-2 p-3">
           Nueva Verificación
           <span className="group-hover:translate-x-0.5 transition-transform">→</span>
         </span>
