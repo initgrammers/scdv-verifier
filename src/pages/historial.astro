@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import BottomNav from '../components/BottomNav.astro';
+import { HistorialList } from '../components/HistorialList';
+---
+
+<BaseLayout title="Historial - SCDV Verificador">
+  <Header />
+  <main class="flex-1 py-6 pb-28">
+    <div class="px-6 mb-4">
+      <h1 class="text-[28px] font-extrabold leading-tight tracking-tight text-white mb-1.5">
+        Historial
+      </h1>
+      <p class="text-sm text-muted font-medium">Tus verificaciones anteriores</p>
+    </div>
+    <HistorialList client:load />
+  </main>
+  <BottomNav />
+</BaseLayout>
