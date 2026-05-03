@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { decodeQRPayload, verifyChain } from '../lib/verifier';
 import { addToHistory } from '../lib/history';
 import { QrScanner } from './QrScanner';
@@ -51,6 +51,16 @@ export function Verifier() {
   const handleReset = useCallback(() => {
     setState(initialState);
   }, []);
+
+  // Auto-trigger verification if ?data= parameter is present in URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const data = params.get('data');
+    if (data) {
+      // Auto-trigger verification with the data from URL
+      handleScan(data);
+    }
+  }, [handleScan]);
 
   const isVerifying = state === 'verifying';
   const showResults = state === 'success' || state === 'error';

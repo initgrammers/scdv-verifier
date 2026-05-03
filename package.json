@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Sistema de Certificados Digitales Verificables - Frontend Verificador",
   "scripts": {
+    "env": "bun --env-file=.env",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",

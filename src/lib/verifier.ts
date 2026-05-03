@@ -64,8 +64,29 @@ export async function verifyChain(
 
 export function decodeQRPayload(raw: string): QRPayload {
   try {
-    const padded = raw.replace(/-/g, '+').replace(/_/g, '/') +
-      '='.repeat((4 - (raw.length % 4)) % 4);
+    let payloadString = raw;
+
+    // Case: URL-wrapped payload (from QR with --verifier-url)
+    // Format: https://verifier.app/verify?data={base64url_payload}
+    if (raw.startsWith('http')) {
+      try {
+        const url = new URL(raw);
+        const dataParam = url.searchParams.get('data');
+        if (!dataParam) {
+          throw new Error('Parámetro ?data= vacío en la URL.');
+        }
+        payloadString = dataParam;
+      } catch (err) {
+        if (err instanceof Error && err.message.includes('Parámetro')) {
+          throw err;
+        }
+        throw new Error('URL inválida o malformada.');
+      }
+    }
+
+    // Decode base64url to bytes
+    const padded = payloadString.replace(/-/g, '+').replace(/_/g, '/') +
+      '='.repeat((4 - (payloadString.length % 4)) % 4);
     const binaryStr = atob(padded);
     const bytes = Uint8Array.from(binaryStr, (c) => c.charCodeAt(0));
     const parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
