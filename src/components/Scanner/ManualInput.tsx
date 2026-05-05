@@ -10,15 +10,15 @@ interface ManualInputProps {
 export function ManualInput({ value, onChange, onSubmit }: ManualInputProps) {
   return (
     <div style={{
-      background: 'rgba(255,255,255,0.05)',
-      border: '1px solid rgba(255,255,255,0.09)',
+      background: 'rgba(10,49,97,0.05)',
+      border: '1px solid rgba(10,49,97,0.1)',
       borderRadius: 18,
       padding: '14px 16px',
       display: 'flex',
       alignItems: 'center',
       gap: 10,
     }}>
-      <Keyboard size={18} style={{ color: 'rgba(255,255,255,0.3)', flexShrink: 0 }} />
+      <Keyboard size={18} style={{ color: 'rgba(10,49,97,0.3)', flexShrink: 0 }} />
       <input
         type="text"
         autoFocus
@@ -31,7 +31,7 @@ export function ManualInput({ value, onChange, onSubmit }: ManualInputProps) {
           background: 'transparent',
           border: 'none',
           outline: 'none',
-          color: '#fff',
+          color: '#0A3161',
           fontSize: 16,
           fontWeight: 500,
           fontFamily: 'inherit',
@@ -42,8 +42,8 @@ export function ManualInput({ value, onChange, onSubmit }: ManualInputProps) {
           onClick={onSubmit}
           style={{
             padding: '6px 14px',
-            background: '#84cc16',
-            color: '#0a0a0a',
+            background: '#B31942',
+            color: '#FFFFFF',
             border: 'none',
             borderRadius: 8,
             fontSize: 12,

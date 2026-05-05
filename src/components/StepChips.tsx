@@ -56,16 +56,16 @@ export function StepChips({ result, isVerifying }: StepChipsProps) {
               'flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all duration-300',
               status === 'success' && 'bg-success/10 border-success/20',
               status === 'failure' && 'bg-danger/10 border-danger/20',
-              (status === 'pending' || status === 'active') && 'bg-card border-white/[0.07]',
+              (status === 'pending' || status === 'active') && 'bg-surface border-primary/10',
               status === 'active' && 'animate-pulse'
             )}
           >
             <StepIcon status={status} index={index + 1} isVerifying={isVerifying} />
             <span className={cn(
               'text-sm font-semibold flex-1',
-              status === 'success' && 'text-white',
+              status === 'success' && 'text-primary',
               status === 'failure' && 'text-danger',
-              (status === 'pending' || status === 'active') && 'text-white/70'
+              (status === 'pending' || status === 'active') && 'text-primary/70'
             )}>
               {step.label}
             </span>

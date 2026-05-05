@@ -39,15 +39,15 @@ export function QrScanner({ onScan, isScanning }: QrScannerProps) {
         <div style={{
           borderRadius: 32,
           overflow: 'hidden',
-          background: '#0a0a0a',
+          background: '#F8F9FA',
           width: '100%',
           maxWidth: '600px',
           margin: '0 auto',
           minHeight: 300,
           aspectRatio: '1/1', // Force square aspect ratio for consistent look
           position: 'relative',
-          border: '1px solid rgba(255,255,255,0.07)',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+          border: '1px solid rgba(10,49,97,0.1)',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
         }}>
           {(!isScanning) && (
             <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
@@ -81,7 +81,7 @@ export function QrScanner({ onScan, isScanning }: QrScannerProps) {
         <button
           onClick={() => setMode(mode === 'camera' ? 'manual' : 'camera')}
           className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] border ${mode === 'camera'
-            ? 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+            ? 'bg-surface border-primary/10 text-primary hover:bg-surface/80'
             : 'bg-accent border-accent text-bg shadow-glow-accent'
             }`}
         >

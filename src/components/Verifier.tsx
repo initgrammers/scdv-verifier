@@ -69,7 +69,7 @@ export function Verifier() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-80px)] w-full relative overflow-hidden">
       {/* Ante-background glow */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="relative z-10 flex flex-col lg:flex-row flex-1 w-full max-w-7xl mx-auto px-4 lg:px-8 pb-24 lg:pb-0 lg:items-center lg:gap-12 xl:gap-20">
 
@@ -109,9 +109,9 @@ function HeroSection({ smallOnDesktop = false }: { smallOnDesktop?: boolean }) {
           </div>
         </div>
 
-        <h1 className={`${smallOnDesktop ? 'text-[32px] lg:text-[44px]' : 'text-[42px] lg:text-[72px]'} font-black leading-[0.9] tracking-tight text-white mb-6 text-center md:text-left transition-all duration-500`}>
+        <h1 className={`${smallOnDesktop ? 'text-[32px] lg:text-[44px]' : 'text-[42px] lg:text-[72px]'} font-black leading-[0.9] tracking-tight text-primary mb-6 text-center md:text-left transition-all duration-500`}>
           Validación <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/40 italic">Instantánea</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-primary/40 italic">Instantánea</span>
         </h1>
         <p className={`${smallOnDesktop ? 'text-sm' : 'text-base md:text-lg'} text-muted font-medium leading-relaxed max-w-[380px] text-center md:text-left opacity-80 transition-all duration-500`}>
           Escanea el código QR del certificado para verificar su autenticidad criptográfica en tiempo real.

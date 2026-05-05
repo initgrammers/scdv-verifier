@@ -18,7 +18,7 @@ export function ScannerOverlay() {
           ...(corner.left !== undefined && { left: corner.left }),
           ...(corner.right !== undefined && { right: corner.right }),
           borderStyle: 'solid',
-          borderColor: '#84cc16',
+          borderColor: '#B31942',
           borderWidth: 0,
           borderTopWidth: corner.borderTop ? 3 : 0,
           borderBottomWidth: corner.borderBottom ? 3 : 0,
@@ -33,7 +33,7 @@ export function ScannerOverlay() {
         left: 20, right: 20,
         height: 2,
         top: '45%',
-        background: 'linear-gradient(to right, transparent, #84cc16, transparent)',
+        background: 'linear-gradient(to right, transparent, #B31942, transparent)',
         opacity: 0.6,
         filter: 'blur(0.5px)',
       }} />

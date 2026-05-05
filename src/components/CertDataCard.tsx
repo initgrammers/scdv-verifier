@@ -42,7 +42,7 @@ export function CertDataCard({ data }: CertDataCardProps) {
   const fields = buildFields(data);
 
   return (
-    <div className="bg-card border border-white/[0.07] rounded-3xl overflow-hidden">
+    <div className="bg-card border border-primary/10 rounded-3xl overflow-hidden">
       <CardHeader />
       <CardBody fields={fields} />
     </div>
@@ -51,7 +51,7 @@ export function CertDataCard({ data }: CertDataCardProps) {
 
 function CardHeader() {
   return (
-    <div className="px-5 py-3.5 flex items-center justify-between border-b border-white/[0.07]">
+    <div className="px-5 py-3.5 flex items-center justify-between border-b border-primary/10">
       <span className="text-xs font-bold tracking-wider uppercase text-muted">
         Datos del Certificado
       </span>
@@ -82,14 +82,14 @@ function CardBody({ fields }: { fields: readonly Field[] }) {
 function FieldRow({ field, isLast }: { field: Field; isLast: boolean }) {
   return (
     <div
-      className={`px-5 py-3.5 flex justify-between items-baseline border-b border-white/[0.07] ${
+      className={`px-5 py-3.5 flex justify-between items-baseline border-b border-primary/10 ${
         isLast ? 'border-b-0' : ''
       }`}
     >
       <span className="text-xs text-muted font-semibold uppercase tracking-wider">
         {field.label}
       </span>
-      <span className="text-sm font-bold text-white text-right max-w-[200px] truncate">
+      <span className="text-sm font-bold text-primary text-right max-w-[200px] truncate">
         {field.value}
       </span>
     </div>

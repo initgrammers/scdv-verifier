@@ -30,7 +30,7 @@ const tabs = [
     class="liquid-glass relative flex w-fit max-w-sm md:max-w-md gap-1 p-1 rounded-[32px] overflow-hidden pointer-events-auto transition-transform active:scale-[0.98]"
   >
     {/* Glass Layers */}
-    <div class="lg-overlay-bg absolute inset-0 z-0 bg-white/[0.03] backdrop-blur-[24px]" />
+    <div class="lg-overlay-bg absolute inset-0 z-0 bg-primary/[0.03] backdrop-blur-[24px]" />
     <div class="lg-filter-layer absolute inset-0 z-1 pointer-events-none">
       <div id="liquid-glass-refractor" class="w-full h-full" />
     </div>
@@ -89,13 +89,13 @@ const tabs = [
             href={tab.href}
             class:list={[
               'nav-tab relative flex flex-col items-center justify-center w-[68px] h-[50px] rounded-[24px] transition-all duration-500 ease-in-out gap-1 no-underline group outline-none',
-              isActive ? 'text-accent' : 'text-white/30 hover:text-white/60',
+              isActive ? 'text-accent' : 'text-muted hover:text-primary/60',
             ]}
           >
             {isActive && (
               <div 
                 transition:name="nav-indicator"
-                class="absolute inset-0 bg-white/[0.05] rounded-[24px] border border-white/[0.1] shadow-inner" 
+                class="absolute inset-0 bg-primary/[0.05] rounded-[24px] border border-primary/[0.1] shadow-inner" 
               />
             )}
             
@@ -116,7 +116,7 @@ const tabs = [
             </span>
             
             {isActive && (
-              <div class="nav-dot absolute -bottom-0.5 w-1 h-1 rounded-full bg-accent shadow-[0_0_8px_#C8F135] transition-all duration-500" />
+              <div class="nav-dot absolute -bottom-0.5 w-1 h-1 rounded-full bg-accent shadow-[0_0_8px_#B31942] transition-all duration-500" />
             )}
           </a>
         );
@@ -127,10 +127,10 @@ const tabs = [
 
 <style>
   .liquid-glass {
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(10, 49, 97, 0.12);
     box-shadow: 
-      0 4px 6px -1px rgba(0, 0, 0, 0.2),
-      0 10px 15px -3px rgba(0, 0, 0, 0.4);
+      0 4px 6px -1px rgba(10, 49, 97, 0.08),
+      0 10px 15px -3px rgba(10, 49, 97, 0.12);
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
