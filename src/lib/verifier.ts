@@ -1,10 +1,19 @@
 import * as ed from '@noble/ed25519';
 import { sha512 } from '@noble/hashes/sha2.js';
-import type { CertData, VerifyResult } from './types';
+import type { CertData, SessionInfo, VerifyResult } from './types';
 
 ed.hashes.sha512 = sha512;
 
-export const ROOT_PUBLIC_KEY = import.meta.env.PUBLIC_ROOT_KEY || 'zCR8NECNxYHIGQO8yNM8s3RhDkmYeturKQ0rG4_BqGs';
+export const ROOT_PUBLIC_KEY = import.meta.env.PUBLIC_ROOT_KEY || 'PzWbhI8G2Jk2KEM9CrDu472A2Q2yzzk2gZK99oCbfno';
+
+export const SESSIONS: Record<number, SessionInfo> = {
+  1: { ciudad: 'Quito', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2025-04-22' },
+  2: { ciudad: 'Quito', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2025-04-21' },
+  3: { ciudad: 'Quito', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2025-04-21' },
+  4: { ciudad: 'Guayaquil', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2025-04-24' },
+  5: { ciudad: 'Guayaquil', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2025-04-24' },
+  6: { ciudad: 'Guayaquil', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2025-04-25' },
+};
 
 function fromBase64Url(b64: string): Uint8Array {
   const padded = b64.replace(/-/g, '+').replace(/_/g, '/') +
@@ -13,8 +22,6 @@ function fromBase64Url(b64: string): Uint8Array {
   return Uint8Array.from(binary, (c) => c.charCodeAt(0));
 }
 
-const CERT_FIELDS = ['ciudad', 'programa_id', 'programa_nombre', 'nombre', 'fecha'] as const;
-
 export async function verifyCertificate(
   payload: string,
   rootPubKeyB64: string = ROOT_PUBLIC_KEY
@@ -22,7 +29,7 @@ export async function verifyCertificate(
   try {
     const { data, sigBytes } = decodeQRPayload(payload);
     const rootPubBytes = fromBase64Url(rootPubKeyB64);
-    const dataBytes = new TextEncoder().encode(encodeCertData(data));
+    const dataBytes = new TextEncoder().encode(expandCertData(data));
 
     const valid = ed.verify(sigBytes, dataBytes, rootPubBytes);
     if (!valid) {
@@ -65,16 +72,26 @@ export function decodeQRPayload(raw: string): { data: CertData; sigBytes: Uint8A
     }
 
     const parts = payloadString.split('|');
-    if (parts.length !== CERT_FIELDS.length + 1) {
+    if (parts.length !== 3) {
       throw new Error('Estructura de QR inválida.');
     }
 
-    const data: CertData = {} as CertData;
-    for (let i = 0; i < CERT_FIELDS.length; i++) {
-      data[CERT_FIELDS[i]] = parts[i];
+    const sessionId = parseInt(parts[0], 10);
+    const session = SESSIONS[sessionId];
+    if (!session) {
+      throw new Error(`Sesión con ID ${sessionId} no encontrada.`);
     }
 
-    const sigBytes = fromBase64Url(parts[CERT_FIELDS.length]);
+    const data: CertData = {
+      ciudad: session.ciudad,
+      programa_id: session.programa_id,
+      programa_nombre: session.programa_nombre,
+      nombre: parts[1],
+      fecha: session.fecha,
+      duracion: session.duracion,
+    };
+
+    const sigBytes = fromBase64Url(parts[2]);
 
     return { data, sigBytes };
   } catch {
@@ -82,10 +99,10 @@ export function decodeQRPayload(raw: string): { data: CertData; sigBytes: Uint8A
   }
 }
 
-export function encodeCertData(data: CertData): string {
-  return CERT_FIELDS.map(field => data[field]).join('|');
+export function expandCertData(data: CertData): string {
+  return `${data.ciudad}|${data.programa_id}|${data.programa_nombre}|${data.nombre}|${data.fecha}|${data.duracion}`;
 }
 
-export function buildQRPayload(data: CertData, sigB64: string): string {
-  return `${encodeCertData(data)}|${sigB64}`;
+export function buildQRPayload(sessionId: number, nombre: string, sigB64: string): string {
+  return `${sessionId}|${nombre}|${sigB64}`;
 }

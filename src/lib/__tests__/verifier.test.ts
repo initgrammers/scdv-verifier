@@ -10,10 +10,22 @@ const toBase64Url = (bytes: Uint8Array): string => {
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 };
 
-const CERT_FIELDS = ['ciudad', 'programa_id', 'programa_nombre', 'nombre', 'fecha'] as const;
+const SESSIONS = {
+  1: { ciudad: 'Quito', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2025-04-22' },
+  2: { ciudad: 'Quito', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2025-04-21' },
+  3: { ciudad: 'Quito', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2025-04-21' },
+  4: { ciudad: 'Guayaquil', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2025-04-24' },
+  5: { ciudad: 'Guayaquil', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2025-04-24' },
+  6: { ciudad: 'Guayaquil', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2025-04-25' },
+};
 
-function buildQRPayload(data: CertData, sigB64: string): string {
-  return `${CERT_FIELDS.map(f => data[f]).join('|')}|${sigB64}`;
+function buildQRPayload(sessionId: number, nombre: string, sigB64: string): string {
+  return `${sessionId}|${nombre}|${sigB64}`;
+}
+
+function expandCertData(sessionId: number, nombre: string): string {
+  const s = SESSIONS[sessionId as keyof typeof SESSIONS];
+  return `${s.ciudad}|${s.programa_id}|${s.programa_nombre}|${nombre}|${s.fecha}|${s.duracion}`;
 }
 
 describe('verifyCertificate — Ed25519 Cryptographic Pipeline', () => {
@@ -27,18 +39,21 @@ describe('verifyCertificate — Ed25519 Cryptographic Pipeline', () => {
     const rootPubKey = ed.getPublicKey(rootPrivKey);
     rootPubKeyB64 = toBase64Url(rootPubKey);
 
-    certData = {
-      ciudad: 'Institución Test',
-      programa_id: 'test-2025',
-      programa_nombre: 'Programa de Prueba',
-      nombre: 'Juan Pérez',
-      fecha: '2025-04-16',
-    };
-
-    const dataBytes = new TextEncoder().encode(CERT_FIELDS.map(f => certData[f]).join('|'));
+    const nombre = 'Juan Pérez';
+    const certString = expandCertData(1, nombre);
+    const dataBytes = new TextEncoder().encode(certString);
     const sigData = ed.sign(dataBytes, rootPrivKey);
 
-    validPayload = buildQRPayload(certData, toBase64Url(sigData));
+    certData = {
+      ciudad: 'Quito',
+      programa_id: 'ia-creadores-contenido',
+      programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas',
+      nombre,
+      fecha: '2025-04-22',
+      duracion: '4',
+    };
+
+    validPayload = buildQRPayload(1, nombre, toBase64Url(sigData));
   });
 
   it('returns valid=true for a legitimate payload', async () => {
@@ -51,19 +66,30 @@ describe('verifyCertificate — Ed25519 Cryptographic Pipeline', () => {
   it('fails when signature was created with a different key', async () => {
     const { verifyCertificate } = await import('../verifier');
     const fakePrivKey = ed.utils.randomSecretKey();
-    const dataBytes = new TextEncoder().encode(CERT_FIELDS.map(f => certData[f]).join('|'));
+    const dataBytes = new TextEncoder().encode(expandCertData(1, 'Juan Pérez'));
     const fakeSig = ed.sign(dataBytes, fakePrivKey);
 
-    const tampered = buildQRPayload(certData, toBase64Url(fakeSig));
+    const tampered = buildQRPayload(1, 'Juan Pérez', toBase64Url(fakeSig));
     const result = await verifyCertificate(tampered, rootPubKeyB64);
     expect(result.valid).toBe(false);
     expect(result.error).toBeDefined();
   });
 
-  it('fails when certificate data was tampered', async () => {
+  it('fails when participant name was tampered', async () => {
     const { verifyCertificate } = await import('../verifier');
-    const tamperedData = { ...certData, nombre: 'Impostor García' };
-    const tampered = buildQRPayload(tamperedData, validPayload.split('|')[CERT_FIELDS.length]);
+    const parts = validPayload.split('|');
+    parts[1] = 'Impostor García';
+    const tampered = parts.join('|');
+    const result = await verifyCertificate(tampered, rootPubKeyB64);
+    expect(result.valid).toBe(false);
+    expect(result.error).toBeDefined();
+  });
+
+  it('fails when session ID is changed', async () => {
+    const { verifyCertificate } = await import('../verifier');
+    const parts = validPayload.split('|');
+    parts[0] = '2';
+    const tampered = parts.join('|');
     const result = await verifyCertificate(tampered, rootPubKeyB64);
     expect(result.valid).toBe(false);
     expect(result.error).toBeDefined();
@@ -71,16 +97,22 @@ describe('verifyCertificate — Ed25519 Cryptographic Pipeline', () => {
 
   it('returns error for malformed signature', async () => {
     const { verifyCertificate } = await import('../verifier');
-    const parts = validPayload.split('|');
-    parts[CERT_FIELDS.length] = 'NOT_VALID_BASE64!!!###';
-    const malformed = parts.join('|');
+    const malformed = buildQRPayload(1, 'Juan Pérez', 'NOT_VALID_BASE64!!!###');
+    const result = await verifyCertificate(malformed, rootPubKeyB64);
+    expect(result.valid).toBe(false);
+    expect(result.error).toBeDefined();
+  });
+
+  it('returns error for invalid session ID', async () => {
+    const { verifyCertificate } = await import('../verifier');
+    const malformed = buildQRPayload(999, 'Juan Pérez', toBase64Url(new Uint8Array(64)));
     const result = await verifyCertificate(malformed, rootPubKeyB64);
     expect(result.valid).toBe(false);
     expect(result.error).toBeDefined();
   });
 });
 
-describe('decodeQRPayload — pipe-delimited decoding', () => {
+describe('decodeQRPayload — session-based decoding', () => {
   let rootPrivKey: Uint8Array;
   let rootPubKeyB64: string;
   let encodedPayload: string;
@@ -91,21 +123,24 @@ describe('decodeQRPayload — pipe-delimited decoding', () => {
     const rootPubKey = ed.getPublicKey(rootPrivKey);
     rootPubKeyB64 = toBase64Url(rootPubKey);
 
-    certData = {
-      ciudad: 'Institución Test',
-      programa_id: 'test-2025',
-      programa_nombre: 'Programa de Prueba',
-      nombre: 'Juan Pérez',
-      fecha: '2025-04-16',
-    };
-
-    const dataBytes = new TextEncoder().encode(CERT_FIELDS.map(f => certData[f]).join('|'));
+    const nombre = 'Ana López';
+    const certString = expandCertData(4, nombre);
+    const dataBytes = new TextEncoder().encode(certString);
     const sigData = ed.sign(dataBytes, rootPrivKey);
 
-    encodedPayload = buildQRPayload(certData, toBase64Url(sigData));
+    certData = {
+      ciudad: 'Guayaquil',
+      programa_id: 'ia-creadores-contenido',
+      programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas',
+      nombre,
+      fecha: '2025-04-24',
+      duracion: '4',
+    };
+
+    encodedPayload = buildQRPayload(4, nombre, toBase64Url(sigData));
   });
 
-  it('decodes a valid pipe-delimited payload', async () => {
+  it('decodes a valid session-based payload', async () => {
     const { decodeQRPayload } = await import('../verifier');
     const { data, sigBytes } = decodeQRPayload(encodedPayload);
     expect(data).toEqual(certData);
@@ -130,12 +165,23 @@ describe('decodeQRPayload — pipe-delimited decoding', () => {
     expect(() => decodeQRPayload('https://verifier.app/verify')).toThrow();
   });
 
-  it('produces smaller payloads than JSON format', () => {
-    const pipePayload = encodedPayload;
+  it('produces significantly smaller payloads than JSON format', () => {
+    const sessionPayload = encodedPayload;
 
-    const jsonPayload = JSON.stringify({ d: certData, s: toBase64Url(new Uint8Array(64)) });
+    const jsonPayload = JSON.stringify({
+      d: {
+        ciudad: 'Guayaquil',
+        programa_id: 'ia-creadores-contenido',
+        programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas',
+        nombre: 'Ana López',
+        fecha: '2025-04-24',
+        duracion: '4',
+      },
+      s: toBase64Url(new Uint8Array(64)),
+    });
     const jsonB64 = Buffer.from(jsonPayload).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-    expect(pipePayload.length).toBeLessThan(jsonB64.length);
+    expect(sessionPayload.length).toBeLessThan(jsonB64.length);
+    expect(sessionPayload.length).toBeLessThan(120);
   });
 });

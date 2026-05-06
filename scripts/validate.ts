@@ -3,7 +3,7 @@
  * Script para validar un QR payload contra la ROOT_PUBLIC_KEY del .env
  * Uso: bun scripts/validate.ts <qr_payload>
  * 
- * Ejemplo: bun scripts/validate.ts "Instituto|python-2025|...|signature"
+ * Ejemplo: bun scripts/validate.ts "1|María García|firma_base64url"
  */
 
 import * as ed from '@noble/ed25519';
@@ -13,7 +13,14 @@ import { resolve } from 'path';
 
 ed.hashes.sha512 = sha512;
 
-const CERT_FIELDS = ['ciudad', 'programa_id', 'programa_nombre', 'nombre', 'fecha'] as const;
+const SESSIONS = {
+  1: { ciudad: 'Quito', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2025-04-22' },
+  2: { ciudad: 'Quito', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2025-04-21' },
+  3: { ciudad: 'Quito', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2025-04-21' },
+  4: { ciudad: 'Guayaquil', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2025-04-24' },
+  5: { ciudad: 'Guayaquil', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2025-04-24' },
+  6: { ciudad: 'Guayaquil', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2025-04-25' },
+};
 
 const fromBase64Url = (b64: string): Uint8Array => {
   const padded = b64.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (b64.length % 4)) % 4);
@@ -37,7 +44,7 @@ if (args.length === 0) {
   console.error('Uso: bun scripts/validate.ts <qr_payload>');
   console.error('');
   console.error('Ejemplo:');
-  console.error('  bun scripts/validate.ts "Instituto de Tecnología|python-2025|..."');
+  console.error('  bun scripts/validate.ts "1|María García|firma_base64url"');
   process.exit(1);
 }
 
@@ -49,26 +56,38 @@ console.log('  SCDV - Validador de Certificados');
 console.log('═══════════════════════════════════════════════════════════\n');
 
 const parts = qrPayload.split('|');
-if (parts.length !== CERT_FIELDS.length + 1) {
-  console.error('❌ Error: QR Payload inválido (estructura incorrecta)');
+if (parts.length !== 3) {
+  console.error('❌ Error: QR Payload inválido (estructura: id|nombre|firma)');
   process.exit(1);
 }
 
-const certData: Record<string, string> = {};
-for (let i = 0; i < CERT_FIELDS.length; i++) {
-  certData[CERT_FIELDS[i]] = parts[i];
+const sessionId = parseInt(parts[0], 10);
+const session = SESSIONS[sessionId as keyof typeof SESSIONS];
+if (!session) {
+  console.error(`❌ Error: Sesión con ID ${sessionId} no encontrada`);
+  process.exit(1);
 }
 
+const nombre = parts[1];
+const certString = `${session.ciudad}|${session.programa_id}|${session.programa_nombre}|${nombre}|${session.fecha}|${session.duracion}`;
+
 console.log('📄 Datos del Certificado:');
-console.log(JSON.stringify(certData, null, 2));
+console.log(JSON.stringify({
+  ciudad: session.ciudad,
+  programa_id: session.programa_id,
+  programa_nombre: session.programa_nombre,
+  nombre,
+  fecha: session.fecha,
+  duracion: session.duracion,
+}, null, 2));
 console.log('');
 
 console.log('🔐 Verificación:');
 console.log('');
 
 const rootPub = fromBase64Url(ROOT_PUBLIC_KEY);
-const dataBytes = new TextEncoder().encode(parts.slice(0, CERT_FIELDS.length).join('|'));
-const sigData = fromBase64Url(parts[CERT_FIELDS.length]);
+const dataBytes = new TextEncoder().encode(certString);
+const sigData = fromBase64Url(parts[2]);
 
 const valid = ed.verify(sigData, dataBytes, rootPub);
 console.log(`   Firma del certificado:`);

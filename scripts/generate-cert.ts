@@ -17,27 +17,34 @@ ed.hashes.sha512 = sha512;
 const toBase64Url = (buf: Uint8Array): string => 
   Buffer.from(buf).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
-const CERT_FIELDS = ['ciudad', 'programa_id', 'programa_nombre', 'nombre', 'fecha'] as const;
-
-interface CertData {
-  ciudad: string;
-  programa_id: string;
-  programa_nombre: string;
-  nombre: string;
-  fecha: string;
-}
-
-const certData: CertData = {
-  ciudad: 'Instituto de Tecnología',
-  programa_id: 'python-2025',
-  programa_nombre: 'Python para Data Science',
-  nombre: 'María García',
-  fecha: '2025-04-14',
+const SESSIONS = {
+  1: { ciudad: 'Quito', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2025-04-22' },
+  2: { ciudad: 'Quito', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2025-04-21' },
+  3: { ciudad: 'Quito', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2025-04-21' },
+  4: { ciudad: 'Guayaquil', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2025-04-24' },
+  5: { ciudad: 'Guayaquil', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2025-04-24' },
+  6: { ciudad: 'Guayaquil', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2025-04-25' },
 };
+
+// Configuración del certificado a generar
+const SESSION_ID = 1;
+const PARTICIPANT_NAME = 'María García';
 
 console.log('═══════════════════════════════════════════════════════════');
 console.log('  SCDV - Generador de Certificados de Prueba');
 console.log('═══════════════════════════════════════════════════════════\n');
+
+const session = SESSIONS[SESSION_ID as keyof typeof SESSIONS];
+if (!session) {
+  console.error(`❌ Sesión con ID ${SESSION_ID} no encontrada`);
+  process.exit(1);
+}
+
+console.log(`📋 Sesión #${SESSION_ID}: ${session.programa_nombre}`);
+console.log(`   Ciudad: ${session.ciudad}`);
+console.log(`   Fecha: ${session.fecha}`);
+console.log(`   Duración: ${session.duracion} horas`);
+console.log(`   Participante: ${PARTICIPANT_NAME}\n`);
 
 // 1. Generar ROOT key pair
 console.log('📝 Generando claves ROOT...');
@@ -47,9 +54,9 @@ const rootPublicB64 = toBase64Url(rootPublic);
 
 console.log('   ✓ Root key pair generado\n');
 
-// 2. Firmar datos directamente con ROOT private key
-console.log('📝 Firmando datos del certificado con ROOT...');
-const certString = CERT_FIELDS.map(f => certData[f]).join('|');
+// 2. Firmar datos expandidos con ROOT private key
+console.log('📝 Firmando datos expandidos del certificado con ROOT...');
+const certString = `${session.ciudad}|${session.programa_id}|${session.programa_nombre}|${PARTICIPANT_NAME}|${session.fecha}|${session.duracion}`;
 const dataBytes = new TextEncoder().encode(certString);
 const sigData = await ed.sign(dataBytes, rootPrivate);
 const sigDataB64 = toBase64Url(sigData);
@@ -58,7 +65,7 @@ const verifySig = ed.verify(sigData, dataBytes, rootPublic);
 console.log(`   ✓ Verificación: ${verifySig ? 'OK' : 'FALLO'}\n`);
 
 // 3. Generar QR payload
-const qrPayload = `${certString}|${sigDataB64}`;
+const qrPayload = `${SESSION_ID}|${PARTICIPANT_NAME}|${sigDataB64}`;
 
 console.log('═══════════════════════════════════════════════════════════');
 console.log('  RESULTADOS');

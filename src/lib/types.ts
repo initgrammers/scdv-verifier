@@ -4,10 +4,15 @@ export interface CertData {
   programa_nombre: string;
   nombre: string;
   fecha: string;
-  duracion?: string;
-  codigo?: string;
-  nivel?: string;
-  contenido?: string;
+  duracion: string;
+}
+
+export interface SessionInfo {
+  ciudad: string;
+  programa_id: string;
+  programa_nombre: string;
+  duracion: string;
+  fecha: string;
 }
 
 export interface VerifyResult {

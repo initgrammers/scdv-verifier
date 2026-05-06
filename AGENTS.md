@@ -18,12 +18,14 @@ El **Verificador** es el componente público del *Sistema de Certificados Digita
 ## 🔐 Algoritmo y Flujo de Verificación Criptográfica
 
 1. La aplicación posee la `ROOT_PUBLIC_KEY` quemada (hardcodeada) en constantes de texto de la aplicación.
-2. Un escaner lee el QR con formato pipe-delimited:
-   - `ciudad|programa_id|programa_nombre|nombre|fecha|signature_base64url`
-   - Los campos son posicionales (índice fijo), sin JSON ni nombres de campos.
+2. Un escaner lee el QR con formato pipe-delimited: `id|nombre|signature_base64url`
+   - `id`: ID numérico de la sesión (1-6), que resuelve a ciudad, programa, fecha y duración desde el diccionario `SESSIONS`.
+   - `nombre`: Nombre del participante (texto libre).
+   - `signature`: Firma Ed25519 sobre los datos expandidos.
 3. El proceso de decisión:
-   - Reconstruir la string de datos: `ciudad|programa_id|programa_nombre|nombre|fecha`
-   - Verificar vía `verify(signature, data_string, ROOT_PUBLIC_KEY)`
+   - Expandir `id` con diccionario `SESSIONS` → datos completos
+   - Reconstruir string: `ciudad|programa_id|programa_nombre|nombre|fecha|duracion`
+   - Verificar vía `verify(signature, expanded_string, ROOT_PUBLIC_KEY)`
 
 ## ⚠️ Reglas Intocables de Arquitectura
 
