@@ -4,7 +4,7 @@ import type { QRPayload, VerifyResult } from './types';
 
 ed.hashes.sha512 = sha512;
 
-export const ROOT_PUBLIC_KEY = import.meta.env.PUBLIC_ROOT_KEY || 'PLACEHOLDER';
+export const ROOT_PUBLIC_KEY = import.meta.env.PUBLIC_ROOT_KEY || '4IPtUQgtn6skkHpXw4Ddg47aS6sqArHVnT9iLCYiUAM';
 
 function fromBase64Url(b64: string): Uint8Array {
   const padded = b64.replace(/-/g, '+').replace(/_/g, '/') +

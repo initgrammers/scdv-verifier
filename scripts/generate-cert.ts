@@ -7,10 +7,12 @@
  * - Root key pair (para el verificador)
  * - Course key pair (para el emisor)  
  * - QR payload válido (para probar en la app)
+ * - Archivos .pem guardados en keys/
  */
 
 import * as ed from '@noble/ed25519';
 import { sha512 } from '@noble/hashes/sha2.js';
+import { mkdirSync, writeFileSync } from 'node:fs';
 ed.hashes.sha512 = sha512;
 
 const toBase64Url = (buf: Uint8Array): string => 
@@ -91,6 +93,9 @@ const qrPayloadB64 = Buffer.from(JSON.stringify(qrPayload))
   .replace(/=/g, '');
 
 // OUTPUT
+const keysDir = 'keys';
+mkdirSync(keysDir, { recursive: true });
+
 console.log('═══════════════════════════════════════════════════════════');
 console.log('  RESULTADOS');
 console.log('═══════════════════════════════════════════════════════════\n');
@@ -104,42 +109,40 @@ console.log('   ' + qrPayloadB64);
 console.log('');
 
 console.log('═══════════════════════════════════════════════════════════');
-console.log('  ARCHIVOS PARA EL EMISOR (guárdalos)');
+console.log('  ARCHIVOS GUARDADOS EN keys/');
 console.log('═══════════════════════════════════════════════════════════\n');
 
-console.log('📁 root_private.pem:');
-console.log('   (Mantener en lugar seguro - offline)');
 const rootPrivatePem = `-----BEGIN PRIVATE KEY-----
 ${Buffer.from(rootPrivate).toString('base64').match(/.{1,64}/g)?.join('\n')}
 -----END PRIVATE KEY-----`;
-console.log(rootPrivatePem);
-console.log('');
+writeFileSync(`${keysDir}/root_private.pem`, rootPrivatePem + '\n');
+console.log('   ✓ keys/root_private.pem');
 
-console.log('📁 root_public.pem:');
 const rootPublicPem = `-----BEGIN PUBLIC KEY-----
 ${Buffer.from(rootPublic).toString('base64').match(/.{1,64}/g)?.join('\n')}
 -----END PUBLIC KEY-----`;
-console.log(rootPublicPem);
-console.log('');
+writeFileSync(`${keysDir}/root_public.pem`, rootPublicPem + '\n');
+console.log('   ✓ keys/root_public.pem');
 
-console.log('📁 course_private.pem:');
 const coursePrivatePem = `-----BEGIN PRIVATE KEY-----
 ${Buffer.from(coursePrivate).toString('base64').match(/.{1,64}/g)?.join('\n')}
 -----END PRIVATE KEY-----`;
-console.log(coursePrivatePem);
-console.log('');
+writeFileSync(`${keysDir}/course_private.pem`, coursePrivatePem + '\n');
+console.log('   ✓ keys/course_private.pem');
 
-console.log('📁 course_public.pem:');
 const coursePublicPem = `-----BEGIN PUBLIC KEY-----
 ${Buffer.from(coursePublic).toString('base64').match(/.{1,64}/g)?.join('\n')}
 -----END PUBLIC KEY-----`;
-console.log(coursePublicPem);
-console.log('');
+writeFileSync(`${keysDir}/course_public.pem`, coursePublicPem + '\n');
+console.log('   ✓ keys/course_public.pem');
 
-console.log('📁 sig_root.txt:');
-console.log(sigRootB64);
-console.log('');
+writeFileSync(`${keysDir}/sig_root.txt`, sigRootB64 + '\n');
+console.log('   ✓ keys/sig_root.txt');
 
+writeFileSync(`${keysDir}/qr_payload.txt`, qrPayloadB64 + '\n');
+console.log('   ✓ keys/qr_payload.txt');
+
+console.log('');
 console.log('═══════════════════════════════════════════════════════════');
 console.log('  RESUMEN');
 console.log('═══════════════════════════════════════════════════════════');
