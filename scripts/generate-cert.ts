@@ -18,12 +18,12 @@ const toBase64Url = (buf: Uint8Array): string =>
   Buffer.from(buf).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 
 const SESSIONS = {
-  1: { ciudad: 'Quito', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2025-04-22' },
-  2: { ciudad: 'Quito', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2025-04-21' },
-  3: { ciudad: 'Quito', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2025-04-21' },
-  4: { ciudad: 'Guayaquil', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2025-04-24' },
-  5: { ciudad: 'Guayaquil', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2025-04-24' },
-  6: { ciudad: 'Guayaquil', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2025-04-25' },
+  1: { ciudad: 'Quito', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2026-04-22' },
+  2: { ciudad: 'Quito', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2026-04-21' },
+  3: { ciudad: 'Quito', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2026-04-21' },
+  4: { ciudad: 'Guayaquil', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2026-04-24' },
+  5: { ciudad: 'Guayaquil', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2026-04-24' },
+  6: { ciudad: 'Guayaquil', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2026-04-25' },
 };
 
 // Configuración del certificado a generar

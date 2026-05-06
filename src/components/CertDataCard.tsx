@@ -82,14 +82,14 @@ function CardBody({ fields }: { fields: readonly Field[] }) {
 function FieldRow({ field, isLast }: { field: Field; isLast: boolean }) {
   return (
     <div
-      className={`px-5 py-3.5 flex justify-between items-baseline border-b border-primary/10 ${
+      className={`px-5 py-3.5 flex flex-col sm:flex-row sm:justify-between sm:items-baseline border-b border-primary/10 ${
         isLast ? 'border-b-0' : ''
       }`}
     >
-      <span className="text-xs text-muted font-semibold uppercase tracking-wider">
+      <span className="text-xs text-muted font-semibold uppercase tracking-wider mb-1 sm:mb-0">
         {field.label}
       </span>
-      <span className="text-sm font-bold text-primary text-right max-w-[200px] truncate">
+      <span className="text-sm font-bold text-primary break-words sm:text-right">
         {field.value}
       </span>
     </div>

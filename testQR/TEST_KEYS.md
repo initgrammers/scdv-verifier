@@ -37,10 +37,10 @@ Para crear un QR válido, el JSON debe tener esta estructura:
 {
   "d": {
     "ciudad": "Instituto de Tecnología",
-    "programa_id": "python-2025",
+    "programa_id": "python-2026",
     "programa_nombre": "Python para Data Science",
     "nombre": "María García",
-    "fecha": "2025-04-14"
+    "fecha": "2026-04-14"
   },
   "k": {
     "pub": "yfbdfaxeBGTL6gPvc9eY4ojnbDmBDVYMpeb_pyugjY8",
