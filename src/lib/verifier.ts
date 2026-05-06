@@ -4,7 +4,7 @@ import type { CertData, VerifyResult } from './types';
 
 ed.hashes.sha512 = sha512;
 
-export const ROOT_PUBLIC_KEY = import.meta.env.PUBLIC_ROOT_KEY || '4IPtUQgtn6skkHpXw4Ddg47aS6sqArHVnT9iLCYiUAM';
+export const ROOT_PUBLIC_KEY = import.meta.env.PUBLIC_ROOT_KEY || 'zCR8NECNxYHIGQO8yNM8s3RhDkmYeturKQ0rG4_BqGs';
 
 function fromBase64Url(b64: string): Uint8Array {
   const padded = b64.replace(/-/g, '+').replace(/_/g, '/') +
