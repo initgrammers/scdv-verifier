@@ -14,7 +14,7 @@ interface StepChipsProps {
 }
 
 const VERIFICATION_STEPS: readonly Step[] = [
-  { key: 'step1_course_auth', label: 'Clave del curso autorizada por Root' },
+  { key: 'step1_program_auth', label: 'Clave del programa autorizada por Root' },
   { key: 'step2_data_integrity', label: 'Datos del certificado intactos' },
 ] as const;
 
@@ -26,7 +26,7 @@ function getStepStatus(result: VerifyResult | undefined, stepKey: string, isVeri
   if (result.valid) return 'success';
   
   // Si no es válido, verificar cuál paso falló
-  const stepPassed = stepKey === 'step1_course_auth' 
+  const stepPassed = stepKey === 'step1_program_auth' 
     ? result.step1Passed 
     : result.step2Passed;
     

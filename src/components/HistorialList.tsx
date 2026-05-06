@@ -25,8 +25,8 @@ export function HistorialList() {
     if (!data) return false;
     return (
       data.nombre?.toLowerCase().includes(query) ||
-      data.curso_nombre?.toLowerCase().includes(query) ||
-      data.emisor?.toLowerCase().includes(query)
+      data.programa_nombre?.toLowerCase().includes(query) ||
+      data.ciudad?.toLowerCase().includes(query)
     );
   });
 
@@ -134,9 +134,9 @@ function HistoryCard({ entry }: { entry: HistoryEntry }) {
         {result.data ? (
           <div className="flex flex-col">
             <FieldRow label="Participante" value={result.data.nombre} />
-            <FieldRow label="Curso" value={result.data.curso_nombre} />
-            {result.data.emisor && (
-              <FieldRow label="Emisor" value={result.data.emisor} isLast />
+            <FieldRow label="Programa" value={result.data.programa_nombre} />
+            {result.data.ciudad && (
+              <FieldRow label="Ciudad" value={result.data.ciudad} isLast />
             )}
           </div>
         ) : result.error && (

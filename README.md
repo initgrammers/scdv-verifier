@@ -10,8 +10,8 @@ Verificador público del **Sistema de Certificados Digitales Verificables**. Det
 
 Decodifica el QR del certificado y ejecuta dos validaciones criptográficas en cadena:
 
-1. **Verifica la clave del curso** — confirma que fue autorizada por la clave raíz del sistema
-2. **Verifica los datos del participante** — confirma que nombre, fecha y curso no fueron alterados
+1. **Verifica la clave del programa** — confirma que fue autorizada por la clave raíz del sistema
+2. **Verifica los datos del participante** — confirma que nombre, fecha y programa no fueron alterados
 
 Todo el procesamiento ocurre en el navegador. Ningún dato sale del dispositivo.
 

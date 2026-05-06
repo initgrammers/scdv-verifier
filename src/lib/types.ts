@@ -1,7 +1,7 @@
 export interface CertData {
-  emisor: string;
-  curso_id: string;
-  curso_nombre: string;
+  ciudad: string;
+  programa_id: string;
+  programa_nombre: string;
   nombre: string;
   fecha: string;
   duracion?: string;
@@ -11,7 +11,7 @@ export interface CertData {
 }
 
 export interface QRKeyMaterial {
-  pub: string;       // Base64url — Ed25519 course public key (32 bytes raw)
+  pub: string;       // Base64url — Ed25519 program public key (32 bytes raw)
   sig_root: string;  // Base64url — signature of pub by root key (64 bytes raw)
 }
 
@@ -21,7 +21,7 @@ export interface QRPayload {
   s: string;         // Base64url — signature of d with k.pub (64 bytes raw)
 }
 
-export type VerifyStep = 'step1_course_auth' | 'step2_data_integrity';
+export type VerifyStep = 'step1_program_auth' | 'step2_data_integrity';
 
 export interface VerifyResult {
   valid: boolean;

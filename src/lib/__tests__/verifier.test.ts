@@ -22,28 +22,28 @@ describe('verifyChain — Ed25519 Cryptographic Pipeline', () => {
     const rootPrivKey = ed.utils.randomSecretKey();
     rootPubKey = ed.getPublicKey(rootPrivKey);
 
-    const coursePrivKey = ed.utils.randomSecretKey();
-    const coursePubKey = ed.getPublicKey(coursePrivKey);
+    const programPrivKey = ed.utils.randomSecretKey();
+    const programPubKey = ed.getPublicKey(programPrivKey);
 
-    // Step 1: sign coursePubKey with rootPrivKey
-    const sigRoot = ed.sign(coursePubKey, rootPrivKey);
+    // Step 1: sign programPubKey with rootPrivKey
+    const sigRoot = ed.sign(programPubKey, rootPrivKey);
 
     certData = {
-      emisor: 'Institución Test',
-      curso_id: 'test-2025',
-      curso_nombre: 'Curso de Prueba',
+      ciudad: 'Institución Test',
+      programa_id: 'test-2025',
+      programa_nombre: 'Programa de Prueba',
       nombre: 'Juan Pérez',
       fecha: '2025-04-16',
     };
 
-    // Step 2: sign JSON.stringify(certData) with coursePrivKey
+    // Step 2: sign JSON.stringify(certData) with programPrivKey
     const dataBytes = new TextEncoder().encode(JSON.stringify(certData));
-    const sigData = ed.sign(dataBytes, coursePrivKey);
+    const sigData = ed.sign(dataBytes, programPrivKey);
 
     validPayload = {
       d: certData,
       k: {
-        pub: toBase64Url(coursePubKey),
+        pub: toBase64Url(programPubKey),
         sig_root: toBase64Url(sigRoot),
       },
       s: toBase64Url(sigData),
@@ -62,9 +62,9 @@ describe('verifyChain — Ed25519 Cryptographic Pipeline', () => {
   it('fails step1 when sig_root was signed by a different root key (CERTIFICADO FALSO)', async () => {
     const { verifyChain } = await import('../verifier');
     const fakeRootPriv = ed.utils.randomSecretKey();
-    const coursePrivKey2 = ed.utils.randomSecretKey();
-    const coursePubKey2 = ed.getPublicKey(coursePrivKey2);
-    const fakeSigRoot = ed.sign(coursePubKey2, fakeRootPriv);
+    const programPrivKey2 = ed.utils.randomSecretKey();
+    const programPubKey2 = ed.getPublicKey(programPrivKey2);
+    const fakeSigRoot = ed.sign(programPubKey2, fakeRootPriv);
 
     const tampered: QRPayload = {
       ...validPayload,
@@ -73,7 +73,7 @@ describe('verifyChain — Ed25519 Cryptographic Pipeline', () => {
     const result = await verifyChain(tampered, toBase64Url(rootPubKey));
     expect(result.valid).toBe(false);
     expect(result.step1Passed).toBe(false);
-    expect(result.failedStep).toBe('step1_course_auth');
+    expect(result.failedStep).toBe('step1_program_auth');
   });
 
   it('fails step2 when certificate data was tampered (DATOS ALTERADOS)', async () => {

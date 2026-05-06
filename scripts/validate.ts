@@ -68,20 +68,20 @@ console.log('');
 console.log('🔐 Verificación:');
 console.log('');
 
-// Step 1: Verificar que la clave del curso fue autorizada por ROOT
-const coursePub = fromBase64Url(payload.k.pub);
+// Step 1: Verificar que la clave del programa fue autorizada por ROOT
+const programPub = fromBase64Url(payload.k.pub);
 const sigRoot = fromBase64Url(payload.k.sig_root);
 const rootPub = fromBase64Url(ROOT_PUBLIC_KEY);
 
-const step1 = ed.verify(sigRoot, coursePub, rootPub);
-console.log(`   Step 1 - Clave del curso autorizada por ROOT:`);
+const step1 = ed.verify(sigRoot, programPub, rootPub);
+console.log(`   Step 1 - Clave del programa autorizada por ROOT:`);
 console.log(`   ${step1 ? '✅ VÁLIDO' : '❌ INVÁLIDO'}`);
 
 // Step 2: Verificar que los datos no fueron alterados
 const dataBytes = new TextEncoder().encode(JSON.stringify(payload.d));
 const sigData = fromBase64Url(payload.s);
 
-const step2 = ed.verify(sigData, dataBytes, coursePub);
+const step2 = ed.verify(sigData, dataBytes, programPub);
 console.log(`   Step 2 - Datos del certificado intactos:`);
 console.log(`   ${step2 ? '✅ VÁLIDO' : '❌ INVÁLIDO'}`);
 

@@ -19,11 +19,11 @@ El **Verificador** es el componente público del *Sistema de Certificados Digita
 
 1. La aplicación posee la `ROOT_PUBLIC_KEY` quemada (hardcodeada) en constantes de texto de la aplicación.
 2. Un escaner lee el QR que posee un Base64Url de la siguiente forma JSON:
-   - `d`: Datos útiles del negocio del certificado (participante, fecha, curso).
-   - `k`: Key material, contiene `pub` (Clave pública del curso específico) y `sig_root` (Firma demostrando que `pub` fue autorizado por nuestra `ROOT_PUBLIC_KEY`).
+   - `d`: Datos útiles del negocio del certificado (participante, fecha, programa).
+   - `k`: Key material, contiene `pub` (Clave pública del programa específico) y `sig_root` (Firma demostrando que `pub` fue autorizado por nuestra `ROOT_PUBLIC_KEY`).
    - `s`: Signature, firma de todos los datos en `d` garantizados por `k.pub`.
 3. El proceso de decisión final debe SIEMPRE consistir de 2 pasos estrictos:
-   - **PASO 1:** Evaluar que el curso está legitimado vía `verify(sig_root, pub, ROOT_PUBLIC_KEY)`.
+   - **PASO 1:** Evaluar que el programa está legitimado vía `verify(sig_root, pub, ROOT_PUBLIC_KEY)`.
    - **PASO 2:** Confirmar que los datos del usuario jamas fueron alterados vía `verify(s, d, pub)`.
 
 ## ⚠️ Reglas Intocables de Arquitectura

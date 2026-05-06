@@ -19,23 +19,23 @@ export async function verifyChain(
 ): Promise<VerifyResult> {
   try {
     const rootPubBytes = fromBase64Url(rootPubKeyB64);
-    const coursePubBytes = fromBase64Url(payload.k.pub);
+    const programPubBytes = fromBase64Url(payload.k.pub);
     const sigRootBytes = fromBase64Url(payload.k.sig_root);
     const sigDataBytes = fromBase64Url(payload.s);
     const dataBytes = new TextEncoder().encode(JSON.stringify(payload.d));
 
-    const step1Passed = ed.verify(sigRootBytes, coursePubBytes, rootPubBytes);
+    const step1Passed = ed.verify(sigRootBytes, programPubBytes, rootPubBytes);
     if (!step1Passed) {
       return {
         valid: false,
         step1Passed: false,
         step2Passed: false,
-        failedStep: 'step1_course_auth',
-        error: 'La clave del curso no está autorizada por la raíz de confianza.',
+        failedStep: 'step1_program_auth',
+        error: 'La clave del programa no está autorizada por la raíz de confianza.',
       };
     }
 
-    const step2Passed = ed.verify(sigDataBytes, dataBytes, coursePubBytes);
+    const step2Passed = ed.verify(sigDataBytes, dataBytes, programPubBytes);
     if (!step2Passed) {
       return {
         valid: false,

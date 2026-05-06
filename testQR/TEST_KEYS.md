@@ -17,17 +17,17 @@ Para crear un QR válido, el JSON debe tener esta estructura:
 ```json
 {
   "d": {
-    "emisor": "Nombre del emisor",
-    "curso_id": "identificador-del-curso",
-    "curso_nombre": "Nombre completo del curso",
+    "ciudad": "Nombre de la ciudad",
+    "programa_id": "identificador-del-programa",
+    "programa_nombre": "Nombre completo del programa",
     "nombre": "Nombre del participante",
     "fecha": "YYYY-MM-DD"
   },
   "k": {
-    "pub": "clave_pública_del_curso_en_base64url",
+    "pub": "clave_pública_del_programa_en_base64url",
     "sig_root": "firma_de_la_clave_pública_por_la_root_key"
   },
-  "s": "firma_de_los_datos_d_con_la_clave_privada_del_curso"
+  "s": "firma_de_los_datos_d_con_la_clave_privada_del_programa"
 }
 ```
 
@@ -36,9 +36,9 @@ Para crear un QR válido, el JSON debe tener esta estructura:
 ```json
 {
   "d": {
-    "emisor": "Instituto de Tecnología",
-    "curso_id": "python-2025",
-    "curso_nombre": "Python para Data Science",
+    "ciudad": "Instituto de Tecnología",
+    "programa_id": "python-2025",
+    "programa_nombre": "Python para Data Science",
     "nombre": "María García",
     "fecha": "2025-04-14"
   },
@@ -64,7 +64,7 @@ El script te dará:
 
 1. Nueva `PUBLIC_ROOT_KEY` para el `.env`
 2. QR Payload listo para usar
-3. Archivos `.pem` para el emisor (course_private, course_public, sig_root)
+3. Archivos `.pem` para el programa (program_private, program_public, sig_root)
 
 ### Opción 2: Generar Manualmente
 

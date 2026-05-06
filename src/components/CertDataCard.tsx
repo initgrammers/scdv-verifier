@@ -26,8 +26,8 @@ function formatDate(dateStr: string): string {
 function buildFields(data: CertData): readonly Field[] {
   const baseFields: Field[] = [
     { label: 'Participante', value: data.nombre },
-    { label: 'Curso', value: data.curso_nombre },
-    { label: 'Emisor', value: data.emisor },
+    { label: 'Programa', value: data.programa_nombre },
+    { label: 'Ciudad', value: data.ciudad },
     { label: 'Fecha', value: formatDate(data.fecha) },
   ];
 

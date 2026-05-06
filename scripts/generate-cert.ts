@@ -5,7 +5,7 @@
  * 
  * Genera:
  * - Root key pair (para el verificador)
- * - Course key pair (para el emisor)  
+ * - Program key pair (para la ciudad)  
  * - QR payload válido (para probar en la app)
  * - Archivos .pem guardados en keys/
  */
@@ -24,18 +24,18 @@ const fromBase64Url = (b64: string): Uint8Array => {
 };
 
 interface CertData {
-  emisor: string;
-  curso_id: string;
-  curso_nombre: string;
+  ciudad: string;
+  programa_id: string;
+  programa_nombre: string;
   nombre: string;
   fecha: string;
 }
 
 // Datos del certificado a firmar
 const certData: CertData = {
-  emisor: 'Instituto de Tecnología',
-  curso_id: 'python-2025',
-  curso_nombre: 'Python para Data Science',
+  ciudad: 'Instituto de Tecnología',
+  programa_id: 'python-2025',
+  programa_nombre: 'Python para Data Science',
   nombre: 'María García',
   fecha: '2025-04-14',
 };
@@ -52,37 +52,37 @@ const rootPublicB64 = toBase64Url(rootPublic);
 
 console.log('   ✓ Root key pair generado\n');
 
-// 2. Generar COURSE key pair
-console.log('📝 Generando claves del CURSO...');
-const coursePrivate = ed.utils.randomSecretKey();
-const coursePublic = await ed.getPublicKeyAsync(coursePrivate);
-const coursePublicB64 = toBase64Url(coursePublic);
+// 2. Generar PROGRAM key pair
+console.log('📝 Generando claves del PROGRAMA...');
+const programPrivate = ed.utils.randomSecretKey();
+const programPublic = await ed.getPublicKeyAsync(programPrivate);
+const programPublicB64 = toBase64Url(programPublic);
 
-console.log('   ✓ Course key pair generado\n');
+console.log('   ✓ Program key pair generado\n');
 
-// 3. Firmar coursePublic con rootPrivate (Step 1)
-console.log('📝 Firmando clave pública del curso con ROOT...');
-const sigRoot = await ed.sign(coursePublic, rootPrivate);
+// 3. Firmar programPublic con rootPrivate (Step 1)
+console.log('📝 Firmando clave pública del programa con ROOT...');
+const sigRoot = await ed.sign(programPublic, rootPrivate);
 const sigRootB64 = toBase64Url(sigRoot);
 
 // Verificar locally
-const verifyStep1 = ed.verify(sigRoot, coursePublic, rootPublic);
+const verifyStep1 = ed.verify(sigRoot, programPublic, rootPublic);
 console.log(`   ✓ Step 1 verificación: ${verifyStep1 ? 'OK' : 'FALLO'}\n`);
 
-// 4. Firmar datos con coursePrivate (Step 2)
+// 4. Firmar datos con programPrivate (Step 2)
 console.log('📝 Firmando datos del certificado...');
 const dataBytes = new TextEncoder().encode(JSON.stringify(certData));
-const sigData = await ed.sign(dataBytes, coursePrivate);
+const sigData = await ed.sign(dataBytes, programPrivate);
 const sigDataB64 = toBase64Url(sigData);
 
 // Verificar locally
-const verifyStep2 = ed.verify(sigData, dataBytes, coursePublic);
+const verifyStep2 = ed.verify(sigData, dataBytes, programPublic);
 console.log(`   ✓ Step 2 verificación: ${verifyStep2 ? 'OK' : 'FALLO'}\n`);
 
 // 5. Generar QR payload
 const qrPayload = {
   d: certData,
-  k: { pub: coursePublicB64, sig_root: sigRootB64 },
+  k: { pub: programPublicB64, sig_root: sigRootB64 },
   s: sigDataB64,
 };
 
@@ -124,17 +124,17 @@ ${Buffer.from(rootPublic).toString('base64').match(/.{1,64}/g)?.join('\n')}
 writeFileSync(`${keysDir}/root_public.pem`, rootPublicPem + '\n');
 console.log('   ✓ keys/root_public.pem');
 
-const coursePrivatePem = `-----BEGIN PRIVATE KEY-----
-${Buffer.from(coursePrivate).toString('base64').match(/.{1,64}/g)?.join('\n')}
+const programPrivatePem = `-----BEGIN PRIVATE KEY-----
+${Buffer.from(programPrivate).toString('base64').match(/.{1,64}/g)?.join('\n')}
 -----END PRIVATE KEY-----`;
-writeFileSync(`${keysDir}/course_private.pem`, coursePrivatePem + '\n');
-console.log('   ✓ keys/course_private.pem');
+writeFileSync(`${keysDir}/program_private.pem`, programPrivatePem + '\n');
+console.log('   ✓ keys/program_private.pem');
 
-const coursePublicPem = `-----BEGIN PUBLIC KEY-----
-${Buffer.from(coursePublic).toString('base64').match(/.{1,64}/g)?.join('\n')}
+const programPublicPem = `-----BEGIN PUBLIC KEY-----
+${Buffer.from(programPublic).toString('base64').match(/.{1,64}/g)?.join('\n')}
 -----END PUBLIC KEY-----`;
-writeFileSync(`${keysDir}/course_public.pem`, coursePublicPem + '\n');
-console.log('   ✓ keys/course_public.pem');
+writeFileSync(`${keysDir}/program_public.pem`, programPublicPem + '\n');
+console.log('   ✓ keys/program_public.pem');
 
 writeFileSync(`${keysDir}/sig_root.txt`, sigRootB64 + '\n');
 console.log('   ✓ keys/sig_root.txt');
@@ -149,5 +149,5 @@ console.log('══════════════════════�
 console.log('');
 console.log('1. Copiá PUBLIC_ROOT_KEY al archivo .env');
 console.log('2. El QR payload está listo para probar en la app');
-console.log('3. Guardá los archivos .pem del curso para emitir certificados');
+console.log('3. Guardá los archivos .pem del programa para emitir certificados');
 console.log('');
