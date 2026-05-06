@@ -9,7 +9,7 @@ interface ResultCardProps {
 const MESSAGES = {
   verifying: {
     title: 'Verificando certificado...',
-    subtitle: 'Ejecutando verificación criptográfica en 2 pasos',
+    subtitle: 'Verificando firma criptográfica Ed25519',
   },
   valid: {
     title: 'Certificado Válido',

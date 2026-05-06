@@ -3,7 +3,7 @@
  * Script para validar un QR payload contra la ROOT_PUBLIC_KEY del .env
  * Uso: bun scripts/validate.ts <qr_payload>
  * 
- * Ejemplo: bun scripts/validate.ts "eyJkIjp7..."
+ * Ejemplo: bun scripts/validate.ts "Instituto|python-2025|...|signature"
  */
 
 import * as ed from '@noble/ed25519';
@@ -13,15 +13,13 @@ import { resolve } from 'path';
 
 ed.hashes.sha512 = sha512;
 
-const toBase64Url = (buf: Uint8Array): string => 
-  Buffer.from(buf).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+const CERT_FIELDS = ['ciudad', 'programa_id', 'programa_nombre', 'nombre', 'fecha'] as const;
 
 const fromBase64Url = (b64: string): Uint8Array => {
   const padded = b64.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (b64.length % 4)) % 4);
   return Uint8Array.from(atob(padded), c => c.charCodeAt(0));
 };
 
-// Cargar PUBLIC_ROOT_KEY desde .env
 function getRootKeyFromEnv(): string {
   try {
     const envPath = resolve(process.cwd(), '.env');
@@ -34,13 +32,12 @@ function getRootKeyFromEnv(): string {
   throw new Error('PUBLIC_ROOT_KEY no encontrada en .env');
 }
 
-// Obtener QR payload del argumento
 const args = process.argv.slice(2);
 if (args.length === 0) {
   console.error('Uso: bun scripts/validate.ts <qr_payload>');
   console.error('');
   console.error('Ejemplo:');
-  console.error('  bun scripts/validate.ts "eyJkIjp7ImVtaXNvciI6Ikluc3RpdHV0byBkZSBUZWNub2xvZ8OtYSIsImN1cnNvX2lkIjoicHl0aG9uLTIwMjUiLCJjdXJzb19ub21icmUiOiJQeXRob24gcGFyYSBEYXRhIFNjaWVuY2UiLCJub21icmUiOiJNYXLDrWEgR2FyY8OtYSIsImZlY2hhIjoiMjAyNS0wNC0xNCJ9LCJrIjp7InB1YiI6IkxWNEgtNHNRcmxQMnB4Nm1hWFA0S1JLYVBMbFB2UnN3NWdpQUJDVlBHWW8iLCJzaWdfcm9vdCI6IlpQdVhHUVI4b2dNbWZyUFJQc0RaM2szMm5pUFZaX0s3U1BaSjhUWVpaT09aRm12eXkzWWk5bnd3aktOZ2VIYmIxbTE1VkV4VjdnN2NNalFyMkp4QkFnIn0sInMiOiJRV0J6VTVia2NxWGwxWHBQR2pnRG8waXFDWUF3aFI0M3RqZ3FQM092T2F3ZVF0RGVZU2s5anlCTFJ0dl9tVEc1QnZKU1hfaXo5NTZvMUpCNmM1M3FBZyJ9"');
+  console.error('  bun scripts/validate.ts "Instituto de Tecnología|python-2025|..."');
   process.exit(1);
 }
 
@@ -51,41 +48,33 @@ console.log('══════════════════════�
 console.log('  SCDV - Validador de Certificados');
 console.log('═══════════════════════════════════════════════════════════\n');
 
-// Decodificar QR
-let payload: any;
-try {
-  const decoded = fromBase64Url(qrPayload);
-  payload = JSON.parse(new TextDecoder().decode(decoded));
-} catch (e) {
-  console.error('❌ Error: QR Payload inválido');
+const parts = qrPayload.split('|');
+if (parts.length !== CERT_FIELDS.length + 1) {
+  console.error('❌ Error: QR Payload inválido (estructura incorrecta)');
   process.exit(1);
 }
 
+const certData: Record<string, string> = {};
+for (let i = 0; i < CERT_FIELDS.length; i++) {
+  certData[CERT_FIELDS[i]] = parts[i];
+}
+
 console.log('📄 Datos del Certificado:');
-console.log(JSON.stringify(payload.d, null, 2));
+console.log(JSON.stringify(certData, null, 2));
 console.log('');
 
 console.log('🔐 Verificación:');
 console.log('');
 
-// Step 1: Verificar que la clave del programa fue autorizada por ROOT
-const programPub = fromBase64Url(payload.k.pub);
-const sigRoot = fromBase64Url(payload.k.sig_root);
 const rootPub = fromBase64Url(ROOT_PUBLIC_KEY);
+const dataBytes = new TextEncoder().encode(parts.slice(0, CERT_FIELDS.length).join('|'));
+const sigData = fromBase64Url(parts[CERT_FIELDS.length]);
 
-const step1 = ed.verify(sigRoot, programPub, rootPub);
-console.log(`   Step 1 - Clave del programa autorizada por ROOT:`);
-console.log(`   ${step1 ? '✅ VÁLIDO' : '❌ INVÁLIDO'}`);
-
-// Step 2: Verificar que los datos no fueron alterados
-const dataBytes = new TextEncoder().encode(JSON.stringify(payload.d));
-const sigData = fromBase64Url(payload.s);
-
-const step2 = ed.verify(sigData, dataBytes, programPub);
-console.log(`   Step 2 - Datos del certificado intactos:`);
-console.log(`   ${step2 ? '✅ VÁLIDO' : '❌ INVÁLIDO'}`);
+const valid = ed.verify(sigData, dataBytes, rootPub);
+console.log(`   Firma del certificado:`);
+console.log(`   ${valid ? '✅ VÁLIDA' : '❌ INVÁLIDA'}`);
 
 console.log('');
 console.log('═══════════════════════════════════════════════════════════');
-console.log(step1 && step2 ? '  ✅ CERTIFICADO VÁLIDO' : '  ❌ CERTIFICADO INVÁLIDO');
+console.log(valid ? '  ✅ CERTIFICADO VÁLIDO' : '  ❌ CERTIFICADO INVÁLIDO');
 console.log('═══════════════════════════════════════════════════════════\n');

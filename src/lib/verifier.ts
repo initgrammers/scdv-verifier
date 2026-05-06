@@ -1,6 +1,6 @@
 import * as ed from '@noble/ed25519';
 import { sha512 } from '@noble/hashes/sha2.js';
-import type { QRPayload, VerifyResult } from './types';
+import type { CertData, VerifyResult } from './types';
 
 ed.hashes.sha512 = sha512;
 
@@ -13,61 +13,41 @@ function fromBase64Url(b64: string): Uint8Array {
   return Uint8Array.from(binary, (c) => c.charCodeAt(0));
 }
 
-export async function verifyChain(
-  payload: QRPayload,
+const CERT_FIELDS = ['ciudad', 'programa_id', 'programa_nombre', 'nombre', 'fecha'] as const;
+
+export async function verifyCertificate(
+  payload: string,
   rootPubKeyB64: string = ROOT_PUBLIC_KEY
 ): Promise<VerifyResult> {
   try {
+    const { data, sigBytes } = decodeQRPayload(payload);
     const rootPubBytes = fromBase64Url(rootPubKeyB64);
-    const programPubBytes = fromBase64Url(payload.k.pub);
-    const sigRootBytes = fromBase64Url(payload.k.sig_root);
-    const sigDataBytes = fromBase64Url(payload.s);
-    const dataBytes = new TextEncoder().encode(JSON.stringify(payload.d));
+    const dataBytes = new TextEncoder().encode(encodeCertData(data));
 
-    const step1Passed = ed.verify(sigRootBytes, programPubBytes, rootPubBytes);
-    if (!step1Passed) {
+    const valid = ed.verify(sigBytes, dataBytes, rootPubBytes);
+    if (!valid) {
       return {
         valid: false,
-        step1Passed: false,
-        step2Passed: false,
-        failedStep: 'step1_program_auth',
-        error: 'La clave del programa no está autorizada por la raíz de confianza.',
-      };
-    }
-
-    const step2Passed = ed.verify(sigDataBytes, dataBytes, programPubBytes);
-    if (!step2Passed) {
-      return {
-        valid: false,
-        step1Passed: true,
-        step2Passed: false,
-        failedStep: 'step2_data_integrity',
-        error: 'Los datos del certificado fueron alterados.',
+        error: 'Los datos del certificado fueron alterados o la firma no es válida.',
       };
     }
 
     return {
       valid: true,
-      step1Passed: true,
-      step2Passed: true,
-      data: payload.d,
+      data,
     };
   } catch (err) {
     return {
       valid: false,
-      step1Passed: false,
-      step2Passed: false,
       error: `Error de procesamiento: ${err instanceof Error ? err.message : 'desconocido'}`,
     };
   }
 }
 
-export function decodeQRPayload(raw: string): QRPayload {
+export function decodeQRPayload(raw: string): { data: CertData; sigBytes: Uint8Array } {
   try {
     let payloadString = raw;
 
-    // Case: URL-wrapped payload (from QR with --verifier-url)
-    // Format: https://verifier.app/verify?data={base64url_payload}
     if (raw.startsWith('http')) {
       try {
         const url = new URL(raw);
@@ -84,22 +64,28 @@ export function decodeQRPayload(raw: string): QRPayload {
       }
     }
 
-    // Decode base64url to bytes
-    const padded = payloadString.replace(/-/g, '+').replace(/_/g, '/') +
-      '='.repeat((4 - (payloadString.length % 4)) % 4);
-    const binaryStr = atob(padded);
-    const bytes = Uint8Array.from(binaryStr, (c) => c.charCodeAt(0));
-    const parsed = JSON.parse(new TextDecoder('utf-8').decode(bytes));
-    if (
-      typeof parsed?.d !== 'object' ||
-      typeof parsed?.k?.pub !== 'string' ||
-      typeof parsed?.k?.sig_root !== 'string' ||
-      typeof parsed?.s !== 'string'
-    ) {
+    const parts = payloadString.split('|');
+    if (parts.length !== CERT_FIELDS.length + 1) {
       throw new Error('Estructura de QR inválida.');
     }
-    return parsed as QRPayload;
+
+    const data: CertData = {} as CertData;
+    for (let i = 0; i < CERT_FIELDS.length; i++) {
+      data[CERT_FIELDS[i]] = parts[i];
+    }
+
+    const sigBytes = fromBase64Url(parts[CERT_FIELDS.length]);
+
+    return { data, sigBytes };
   } catch {
     throw new Error('QR malformado o no es un certificado SCDV.');
   }
+}
+
+export function encodeCertData(data: CertData): string {
+  return CERT_FIELDS.map(field => data[field]).join('|');
+}
+
+export function buildQRPayload(data: CertData, sigB64: string): string {
+  return `${encodeCertData(data)}|${sigB64}`;
 }

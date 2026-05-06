@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { decodeQRPayload, verifyChain } from '../lib/verifier';
+import { verifyCertificate } from '../lib/verifier';
 import { addToHistory } from '../lib/history';
 import { QrScanner } from './QrScanner';
 import { ResultCard } from './ResultCard';
@@ -28,8 +28,7 @@ export function Verifier() {
     setState(prev => ({ ...prev, state: 'verifying', result: undefined }));
 
     try {
-      const payload = decodeQRPayload(rawData);
-      const verifyResult = await verifyChain(payload);
+      const verifyResult = await verifyCertificate(rawData);
       setState(prev => {
         if (verifyResult.valid) {
           addToHistory(verifyResult, rawData);
@@ -40,8 +39,6 @@ export function Verifier() {
     } catch (err) {
       const errorResult: VerifyResult = {
         valid: false,
-        step1Passed: false,
-        step2Passed: false,
         error: err instanceof Error ? err.message : 'Error desconocido',
       };
       setState(prev => ({ ...prev, result: errorResult, state: 'error' }));

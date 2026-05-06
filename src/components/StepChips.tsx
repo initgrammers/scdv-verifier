@@ -14,29 +14,14 @@ interface StepChipsProps {
 }
 
 const VERIFICATION_STEPS: readonly Step[] = [
-  { key: 'step1_program_auth', label: 'Clave del programa autorizada por Root' },
-  { key: 'step2_data_integrity', label: 'Datos del certificado intactos' },
+  { key: 'signature', label: 'Firma criptográfica verificada' },
 ] as const;
 
-function getStepStatus(result: VerifyResult | undefined, stepKey: string, isVerifying: boolean): StepStatus {
+function getStepStatus(result: VerifyResult | undefined, isVerifying: boolean): StepStatus {
   if (isVerifying && !result) return 'active';
   if (!result) return 'pending';
-  
-  // Si es válido, ambos pasos son success
   if (result.valid) return 'success';
-  
-  // Si no es válido, verificar cuál paso falló
-  const stepPassed = stepKey === 'step1_program_auth' 
-    ? result.step1Passed 
-    : result.step2Passed;
-    
-  if (stepPassed) return 'success';
-  
-  // Si este paso falló, es failure
-  if (result.failedStep === stepKey) return 'failure';
-  
-  // Este paso no falló pero el resultado es inválido (otro paso falló antes)
-  return 'pending';
+  return 'failure';
 }
 
 function cn(...classes: (string | boolean | undefined)[]): string {
@@ -44,43 +29,39 @@ function cn(...classes: (string | boolean | undefined)[]): string {
 }
 
 export function StepChips({ result, isVerifying }: StepChipsProps) {
+  const status = getStepStatus(result, isVerifying);
+  const step = VERIFICATION_STEPS[0];
+
   return (
     <div className="flex flex-col gap-2 mx-6 mt-3">
-      {VERIFICATION_STEPS.map((step, index) => {
-        const status = getStepStatus(result, step.key, isVerifying);
-        
-        return (
-          <div
-            key={step.key}
-            className={cn(
-              'flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all duration-300',
-              status === 'success' && 'bg-success/10 border-success/20',
-              status === 'failure' && 'bg-danger/10 border-danger/20',
-              (status === 'pending' || status === 'active') && 'bg-surface border-primary/10',
-              status === 'active' && 'animate-pulse'
-            )}
-          >
-            <StepIcon status={status} index={index + 1} isVerifying={isVerifying} />
-            <span className={cn(
-              'text-sm font-semibold flex-1',
-              status === 'success' && 'text-primary',
-              status === 'failure' && 'text-danger',
-              (status === 'pending' || status === 'active') && 'text-primary/70'
-            )}>
-              {step.label}
-            </span>
-            {status === 'success' && <CheckCircle size={16} className="text-success" />}
-            {status === 'failure' && <XCircle size={16} className="text-danger" />}
-          </div>
-        );
-      })}
+      <div
+        className={cn(
+          'flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all duration-300',
+          status === 'success' && 'bg-success/10 border-success/20',
+          status === 'failure' && 'bg-danger/10 border-danger/20',
+          (status === 'pending' || status === 'active') && 'bg-surface border-primary/10',
+          status === 'active' && 'animate-pulse'
+        )}
+      >
+        <StepIcon status={status} isVerifying={isVerifying} />
+        <span className={cn(
+          'text-sm font-semibold flex-1',
+          status === 'success' && 'text-primary',
+          status === 'failure' && 'text-danger',
+          (status === 'pending' || status === 'active') && 'text-primary/70'
+        )}>
+          {step.label}
+        </span>
+        {status === 'success' && <CheckCircle size={16} className="text-success" />}
+        {status === 'failure' && <XCircle size={16} className="text-danger" />}
+      </div>
     </div>
   );
 }
 
-function StepIcon({ status, index, isVerifying }: { status: StepStatus; index: number; isVerifying: boolean }) {
+function StepIcon({ status, isVerifying }: { status: StepStatus; isVerifying: boolean }) {
   const baseClasses = 'w-7 h-7 rounded-full flex items-center justify-center text-xs font-extrabold flex-shrink-0';
-  
+
   const statusClasses = {
     success: 'bg-success/20 text-success border border-success/30',
     failure: 'bg-danger/20 text-danger border border-danger/30',
@@ -114,7 +95,7 @@ function StepIcon({ status, index, isVerifying }: { status: StepStatus; index: n
 
   return (
     <div className={cn(baseClasses, statusClasses.pending)}>
-      {index}
+      1
     </div>
   );
 }
