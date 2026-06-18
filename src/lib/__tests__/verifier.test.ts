@@ -17,6 +17,12 @@ const SESSIONS = {
   4: { ciudad: 'Guayaquil', programa_id: 'ia-creadores-contenido', programa_nombre: 'Inteligencia Artificial para Creadores de Contenido y Periodistas', duracion: '4', fecha: '2026-04-24' },
   5: { ciudad: 'Guayaquil', programa_id: 'ia-sector-publico', programa_nombre: 'Inteligencia Artificial para el Sector Público', duracion: '4', fecha: '2026-04-24' },
   6: { ciudad: 'Guayaquil', programa_id: 'ia-emprendedores', programa_nombre: 'Inteligencia Artificial para Emprendedores y Sociedad Civil', duracion: '4', fecha: '2026-04-25' },
+  7: { ciudad: 'Quito', programa_id: 'techties-2026', programa_nombre: 'Voluntariado - TechTies Ecuador 2026', duracion: '24', fecha: '2026-04-20 al 2026-04-22' },
+  8: { ciudad: 'Quito', programa_id: 'techties-2026', programa_nombre: 'Voluntariado - TechTies Ecuador 2026', duracion: '8', fecha: '2026-04-20' },
+  9: { ciudad: 'Quito', programa_id: 'techties-2026', programa_nombre: 'Voluntariado - TechTies Ecuador 2026', duracion: '8', fecha: '2026-04-22' },
+  10: { ciudad: 'Quito', programa_id: 'techties-2026', programa_nombre: 'Voluntariado - TechTies Ecuador 2026', duracion: '8', fecha: '2026-04-21' },
+  11: { ciudad: 'Guayaquil', programa_id: 'techties-2026', programa_nombre: 'Voluntariado - TechTies Ecuador 2026', duracion: '24', fecha: '2026-04-23 al 2026-04-25' },
+  12: { ciudad: 'Guayaquil', programa_id: 'techties-2026', programa_nombre: 'Voluntariado - TechTies Ecuador 2026', duracion: '8', fecha: '2026-04-25' },
 };
 
 function buildQRPayload(sessionId: number, nombre: string, sigB64: string): string {
